@@ -398,6 +398,8 @@ function attachUserActions(container) {
         } catch (err) {
           btn.innerHTML = originalText;
           btn.disabled = false;
+          console.error('Delete User UI Component Error:', err);
+          alert('Внимание! Изтриването не успя: ' + (err.message || 'Неизвестна грешка'));
           throw err;
         }
       }

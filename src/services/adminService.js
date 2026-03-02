@@ -174,9 +174,40 @@ export async function fetchAllUsers() {
 }
 
 export async function deleteUserAndData(userId) {
+  console.log(`Initialising delete user request for ID: ${userId}`);
+  
+  // Explicitly get the current session token to ensure it's passed correctly
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  
+  if (sessionError || !session) {
+    throw new Error('No active session found. Please log in again.');
+  }
+  
+  const token = session.access_token;
+
   const { data, error } = await supabase.functions.invoke('delete-user', {
-    body: { userId }
+    body: { userId },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   });
-  if (error) throw error;
+
+  if (error) {
+    console.error('Change log: Supabase Function Error:', error);
+    // If the error object has context (e.g. from JSON response), log it
+    if (error.context && error.context.json) {
+       const errorBody = await error.context.json();
+       console.error('Change log: Function Error Body:', errorBody);
+       throw new Error(errorBody.error || error.message);
+    }
+    throw error;
+  }
+  
+  // Also check if data contains an error property (if 200 OK but application error)
+  if (data && data.error) {
+    console.error('Change log: Application Error in response:', data.error);
+    throw new Error(data.error);
+  }
+
   return data;
 }

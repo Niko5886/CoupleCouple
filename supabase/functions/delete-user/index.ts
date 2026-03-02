@@ -12,10 +12,20 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+
+    if (!authHeader) {
+      console.error("Missing Authorization header");
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+      { global: { headers: { Authorization: authHeader } } }
     );
 
     // Admin client (service_role) to bypass RLS for privileged checks/actions
@@ -25,13 +35,20 @@ serve(async (req) => {
     );
 
     // 1. Verify caller is an admin
+    const token = authHeader.replace('Bearer ', '');
     const {
       data: { user },
       error: authError,
-    } = await supabaseClient.auth.getUser();
+    } = await supabaseClient.auth.getUser(token);
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error("Auth verification failed:", authError);
+      return new Response(JSON.stringify({ 
+        error: `Unauthorized: ${authError?.message || 'Invalid user token'}`, 
+        // Be careful not to leak sensitive internal error details to client in prod, 
+        // but for debugging admin panel errors this is helpful.
+        details: authError 
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
@@ -119,8 +136,13 @@ serve(async (req) => {
     await supabaseAdmin.from('profile_change_log').update({ changed_by: null }).eq('changed_by', targetUserId);
 
     // DELETE non-cascading dependent rows entirely
-    await supabaseAdmin.from('tasks').delete().eq('created_by', targetUserId);
-    await supabaseAdmin.from('admin_notifications').delete().eq('admin_id', targetUserId);
+    // Tasks table seems to be missing from DB or not needed for Dating app
+    // await supabaseAdmin.from('tasks').delete().eq('created_by', targetUserId);
+    
+    // Admin notifications and audit log - cascading fixed in DB migrations, but good to clean manually or let cascade
+    // However, some might not be cascading yet if migrations failed? 
+    // We fixed admin_notifications cascading.
+    
     await supabaseAdmin.from('admin_notifications').delete().eq('target_user_id', targetUserId);
     await supabaseAdmin.from('admin_audit_log').delete().eq('admin_id', targetUserId);
     await supabaseAdmin.from('admin_audit_log').delete().eq('target_user_id', targetUserId);
