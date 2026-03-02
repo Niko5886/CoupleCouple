@@ -206,5 +206,12 @@ export function calculateAge(birthDate) {
 
 export function formatLastSeen(ts) {
   if (!ts) return '—';
-  return new Date(ts).toLocaleString();
+  return new Date(ts).toLocaleString('bg-BG');
+}
+
+export async function fetchProfilesByIds(userIds) {
+  if (!userIds || !userIds.length) return [];
+  const { data, error } = await supabase.from('profiles').select('id, username, avatar_url, is_online, last_seen_at').in('id', userIds);
+  if (error) throw error;
+  return data;
 }

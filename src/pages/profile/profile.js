@@ -3,6 +3,7 @@ import profileTemplate from './profile.html?raw';
 import toast from '../../components/toast/toast.js';
 import { fetchProfileWithPhotos, calculateAge, formatLastSeen, updateProfile, uploadProfilePhoto } from '../../services/profileService.js';
 import { getAuthUser } from '../../services/authState.js';
+import { router } from '../../router/router.js';
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -70,7 +71,7 @@ function renderGallery(container, photos) {
     .join('');
 }
 
-function setupActions(page, profileName, isOwnProfile) {
+function setupActions(page, profileName, isOwnProfile, profileId) {
   const actionsSection = page.querySelector('[data-actions-section]');
   if (actionsSection) {
     if (isOwnProfile) {
@@ -81,11 +82,12 @@ function setupActions(page, profileName, isOwnProfile) {
   }
 
   page.addEventListener('click', (event) => {
-    const action = event.target?.dataset?.action;
-    if (!action) return;
+      const btn = event.target.closest('[data-action]');
+      const action = btn?.dataset?.action;
+      if (!action) return;
 
-    if (action === 'message') {
-      toast.info('Модулът за съобщения ще се свърже в следваща стъпка.', { title: `Съобщение до ${profileName}` });
+      if (action === 'message') {
+        router.navigate(`/messages?userId=${profileId}`);
     } else if (action === 'friend') {
       toast.info('Добавянето в приятели ще се свърже в следваща стъпка.', { title: `Приятелство с ${profileName}` });
     } else if (action === 'like') {
@@ -185,7 +187,7 @@ async function loadPublicProfile(page, userId, routerContext) {
     renderTags(fetishesEl, profile.fetishes || [], isOwnProfile, 'fetishes');
     renderGallery(galleryEl, visiblePhotos);
     
-    setupActions(page, profileName, isOwnProfile);
+    setupActions(page, profileName, isOwnProfile, userId);
     
     if (isOwnProfile) {
       addPhotoBtn.hidden = false;

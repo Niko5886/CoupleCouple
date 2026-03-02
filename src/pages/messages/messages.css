@@ -1,0 +1,90 @@
+.messages-container {
+  height: calc(100vh - 100px);
+  max-height: 900px;
+}
+
+.messages-layout {
+  height: 100%;
+}
+
+.contacts-sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.chat-area {
+  transition: transform 0.3s ease-in-out;
+}
+
+.contact-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.contact-item:hover, .contact-item.active {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.contact-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #0d6efd; /* bg-primary */
+  border-radius: 0 4px 4px 0;
+}
+
+/* Chat Bubbles */
+.message-bubble {
+  max-width: 75%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  position: relative;
+  font-size: 0.95rem;
+}
+
+.message-sent {
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 16px 16px 4px 16px;
+  margin-left: auto;
+}
+
+.message-received {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e9ecef;
+  border-radius: 16px 16px 16px 4px;
+  margin-right: auto;
+}
+
+/* Mobile responsive layout hide/show */
+@media (max-width: 767.98px) {
+  /* On mobile, either show contacts OR chat, not both */
+  .chat-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    transform: translateX(100%);
+  }
+
+  /* When a chat is active, slide it in */
+  .messages-layout.chat-active .chat-area {
+    transform: translateX(0);
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
