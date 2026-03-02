@@ -1,22 +1,17 @@
-.dashboard-page {
-  padding: 2rem;
-  /* Dark color #0b1220 over the sexshoop.jpg image (roughly 85% opacity overlay) */
+.users-page {
+  padding: 1.5rem;
   background: transparent;
-  
-  
-  
-  
   min-height: 100vh;
   color: #f5f7fb;
 }
 
-.dashboard-container {
+.users-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 
-.dashboard-header {
+.users-header {
   margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;
@@ -24,14 +19,14 @@
   gap: 2rem;
 }
 
-.dashboard-header h1 {
+.users-header h1 {
   margin: 0;
   font-size: 2.2rem;
   color: #f5f7fb;
   font-weight: 700;
 }
 
-.dashboard-subtitle {
+.users-subtitle {
   margin: 0.5rem 0 0;
   color: #d4deee;
   font-size: 1rem;
@@ -40,16 +35,16 @@
 .users-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.15rem;
   margin-bottom: 2rem;
 }
 
 .user-card {
-  background: #0b1220; /* Same as sidebar background */
-  border: 1px solid #1b2a3e; /* Same as sidebar border */
-  border-radius: 12px;
+  background: rgba(11, 18, 32, 0.82);
+  border: 1px solid #1b2a3e;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.38);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
   display: flex;
@@ -65,9 +60,9 @@
 .user-card-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5; /* Matches typical vertical portrait */
+  aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: #16253a; /* Same as sidebar hover */
+  background: #16253a;
 }
 
 .user-card-image img {
@@ -88,7 +83,7 @@
 }
 
 .user-card-info {
-  background: #0b1220;
+  background: transparent;
   padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
@@ -119,7 +114,7 @@
 
 .user-details {
   font-size: 0.9rem;
-  color: #8eb7f1; /* Light blue accent */
+  color: #8eb7f1;
   display: flex;
   align-items: center;
 }
@@ -136,9 +131,9 @@
 .no-users-message {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 2.5rem 1rem;
   color: #d4deee;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .loading-message {
@@ -151,12 +146,16 @@
 }
 
 @media (max-width: 768px) {
+  .users-page {
+    padding: 1rem;
+  }
+
   .users-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
   }
 
-  .dashboard-header {
+  .users-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;

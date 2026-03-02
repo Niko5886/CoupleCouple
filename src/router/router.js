@@ -54,7 +54,7 @@ export function initializeRouter() {
       if (route.requiredRole) {
         const hasRequiredRole = await userHasRole(route.requiredRole);
         if (!hasRequiredRole) {
-          router.navigate('/dashboard');
+          router.navigate('/users');
           return;
         }
       }

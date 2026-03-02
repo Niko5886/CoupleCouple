@@ -74,10 +74,10 @@ function setupActions(page, profileName, isOwnProfile) {
   const actionsSection = page.querySelector('[data-actions-section]');
   if (actionsSection) {
     if (isOwnProfile) {
-      actionsSection.style.display = 'none'; // Hide actions on own profile
+      actionsSection.hidden = true;
       return;
     }
-    actionsSection.style.display = 'block';
+    actionsSection.hidden = false;
   }
 
   page.addEventListener('click', (event) => {
@@ -188,12 +188,13 @@ async function loadPublicProfile(page, userId, routerContext) {
     setupActions(page, profileName, isOwnProfile);
     
     if (isOwnProfile) {
-      addPhotoBtn.style.display = 'flex';
+      addPhotoBtn.hidden = false;
+      photoInput.hidden = false;
       setupEditableFields(page, userId);
       setupPhotoUpload(addPhotoBtn, photoInput, userId, () => loadPublicProfile(page, userId, routerContext));
     } else {
-      addPhotoBtn.style.display = 'none';
-      if (photoInput) photoInput.style.display = 'none';
+      addPhotoBtn.hidden = true;
+      if (photoInput) photoInput.hidden = true;
     }
   } catch (error) {
     statusEl.textContent = error?.message || 'Възникна грешка при зареждането на профила.';
@@ -215,7 +216,7 @@ function setupPhotoUpload(addBtn, fileInput, userId, onUploadSuccess) {
     if (!file) return;
 
     try {
-      newBtn.textContent = '⏳';
+      newBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
       newBtn.disabled = true;
       toast.info('Качване на снимката...', { duration: 2000 });
       
@@ -226,7 +227,7 @@ function setupPhotoUpload(addBtn, fileInput, userId, onUploadSuccess) {
     } catch (err) {
       console.error(err);
       toast.error(err.message || 'Неуспшно качване на снимка.');
-      newBtn.textContent = '➕';
+      newBtn.innerHTML = '<i class="bi bi-plus-lg"></i>';
       newBtn.disabled = false;
     } finally {
       newInput.value = '';
@@ -240,20 +241,19 @@ function createEditForm(type, field, initialValue, onSave, onCancel) {
   
   if (type === 'textarea') {
     form.classList.add('inline-edit-form--textarea');
-    form.style.flexDirection = 'column';
     form.innerHTML = `
       <textarea class="inline-edit-textarea" required>${escapeHtml(initialValue)}</textarea>
       <div class="textarea-actions">
-        <button type="button" class="inline-edit-btn" data-cancel>❌ Отказ</button>
-        <button type="submit" class="inline-edit-btn" style="background:#2563eb;color:#fff;">✅ Запази</button>
+        <button type="button" class="inline-edit-btn btn btn-outline-secondary btn-sm" data-cancel><i class="bi bi-x-lg me-1"></i>Отказ</button>
+        <button type="submit" class="inline-edit-btn btn btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i>Запази</button>
       </div>
     `;
   } else if (type === 'array') {
      form.innerHTML = `
       <input type="text" class="inline-edit-input" value="${escapeHtml(initialValue)}" placeholder="разделени със запетая..." />
       <div class="inline-edit-actions">
-        <button type="submit" class="inline-edit-btn" title="Запази">✅</button>
-        <button type="button" class="inline-edit-btn" data-cancel title="Отказ">❌</button>
+        <button type="submit" class="inline-edit-btn btn btn-primary btn-sm" title="Запази"><i class="bi bi-check-lg"></i></button>
+        <button type="button" class="inline-edit-btn btn btn-outline-secondary btn-sm" data-cancel title="Отказ"><i class="bi bi-x-lg"></i></button>
       </div>
     `;
   } else if (type === 'select' && field === 'gender') {
@@ -264,24 +264,24 @@ function createEditForm(type, field, initialValue, onSave, onCancel) {
         <option value="couple" ${initialValue === 'couple' ? 'selected' : ''}>Двойка</option>
       </select>
       <div class="inline-edit-actions">
-        <button type="submit" class="inline-edit-btn" title="Запази">✅</button>
-        <button type="button" class="inline-edit-btn" data-cancel title="Отказ">❌</button>
+        <button type="submit" class="inline-edit-btn btn btn-primary btn-sm" title="Запази"><i class="bi bi-check-lg"></i></button>
+        <button type="button" class="inline-edit-btn btn btn-outline-secondary btn-sm" data-cancel title="Отказ"><i class="bi bi-x-lg"></i></button>
       </div>
     `;
   } else if (type === 'date') {
     form.innerHTML = `
       <input type="${type}" class="inline-edit-input" value="${escapeHtml(initialValue)}" required max="${getEighteenYearsAgoString()}" />
       <div class="inline-edit-actions">
-        <button type="submit" class="inline-edit-btn" title="Запази">✅</button>
-        <button type="button" class="inline-edit-btn" data-cancel title="Отказ">❌</button>
+        <button type="submit" class="inline-edit-btn btn btn-primary btn-sm" title="Запази"><i class="bi bi-check-lg"></i></button>
+        <button type="button" class="inline-edit-btn btn btn-outline-secondary btn-sm" data-cancel title="Отказ"><i class="bi bi-x-lg"></i></button>
       </div>
     `;
   } else {
     form.innerHTML = `
       <input type="${type}" class="inline-edit-input" value="${escapeHtml(initialValue)}" required />
       <div class="inline-edit-actions">
-        <button type="submit" class="inline-edit-btn" title="Запази">✅</button>
-        <button type="button" class="inline-edit-btn" data-cancel title="Отказ">❌</button>
+        <button type="submit" class="inline-edit-btn btn btn-primary btn-sm" title="Запази"><i class="bi bi-check-lg"></i></button>
+        <button type="button" class="inline-edit-btn btn btn-outline-secondary btn-sm" data-cancel title="Отказ"><i class="bi bi-x-lg"></i></button>
       </div>
     `;
   }

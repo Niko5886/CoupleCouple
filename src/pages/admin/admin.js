@@ -19,24 +19,24 @@ const selectedPhotos = new Set();
 
 function renderStats(container, stats) {
   container.innerHTML = `
-    <div class="admin-stats-grid">
-      <div class="stat-card">
+    <div class="admin-stats-grid row g-3">
+      <div class="stat-card card col-12 col-sm-6 col-lg-4">
         <p>Чакащи потребители</p>
         <strong>${stats.pendingUsers}</strong>
       </div>
-      <div class="stat-card">
+      <div class="stat-card card col-12 col-sm-6 col-lg-4">
         <p>Одобрени потребители</p>
         <strong>${stats.approvedUsers}</strong>
       </div>
-      <div class="stat-card">
+      <div class="stat-card card col-12 col-sm-6 col-lg-4">
         <p>Чакащи снимки</p>
         <strong>${stats.pendingPhotos}</strong>
       </div>
-      <div class="stat-card">
+      <div class="stat-card card col-12 col-sm-6 col-lg-4">
         <p>Одобрени снимки</p>
         <strong>${stats.approvedPhotos}</strong>
       </div>
-      <div class="stat-card">
+      <div class="stat-card card col-12 col-sm-6 col-lg-4">
         <p>Общо потребители</p>
         <strong>${stats.totalUsers}</strong>
       </div>
@@ -46,7 +46,7 @@ function renderStats(container, stats) {
 
 function renderUsers(container, users) {
   if (!users.length) {
-    container.innerHTML = '<p class="muted">Няма чакащи или в преглед профили.</p>';
+    container.innerHTML = '<p class="muted"><i class="bi bi-check-circle me-2"></i>Няма чакащи или в преглед профили.</p>';
     return;
   }
 
@@ -62,9 +62,9 @@ function renderUsers(container, users) {
             ${user.rejection_reason ? `<p class="text-danger">Причина: ${user.rejection_reason}</p>` : ''}
           </div>
           <div class="admin-actions">
-            <button data-action="user-review" data-id="${user.id}">В преглед</button>
-            <button data-action="user-approve" data-id="${user.id}" class="btn-primary">Одобри</button>
-            <button data-action="user-reject" data-id="${user.id}" class="btn-danger">Отхвърли</button>
+            <button data-action="user-review" data-id="${user.id}" class="btn btn-outline-secondary btn-sm">В преглед</button>
+            <button data-action="user-approve" data-id="${user.id}" class="btn-primary btn btn-sm"><i class="bi bi-check-lg me-1"></i>Одобри</button>
+            <button data-action="user-reject" data-id="${user.id}" class="btn-danger btn btn-sm"><i class="bi bi-x-lg me-1"></i>Отхвърли</button>
           </div>
         </div>
       `;
@@ -75,22 +75,22 @@ function renderUsers(container, users) {
 function renderPhotos(container, photos) {
   selectedPhotos.clear();
   if (!photos.length) {
-    container.innerHTML = '<p class="muted">Няма чакащи снимки.</p>';
+    container.innerHTML = '<p class="muted"><i class="bi bi-images me-2"></i>Няма чакащи снимки.</p>';
     return;
   }
 
   container.innerHTML = `
     <div class="photo-actions">
-      <button data-action="photos-approve-selected" class="btn-primary">Одобри избраните</button>
-      <button data-action="photos-reject-selected" class="btn-danger">Отхвърли избраните</button>
+      <button data-action="photos-approve-selected" class="btn-primary btn"><i class="bi bi-check2-square me-1"></i>Одобри избраните</button>
+      <button data-action="photos-reject-selected" class="btn-danger btn"><i class="bi bi-x-square me-1"></i>Отхвърли избраните</button>
     </div>
     <div class="photo-grid">
       ${photos
         .map(
           (photo) => `
             <div class="photo-card" data-photo-id="${photo.id}">
-              <label class="checkbox">
-                <input type="checkbox" data-photo-checkbox value="${photo.id}" />
+              <label class="checkbox form-check">
+                <input class="form-check-input" type="checkbox" data-photo-checkbox value="${photo.id}" />
                 <span>Избери</span>
               </label>
               <img src="${photo.photo_url}" alt="Снимка" />
@@ -189,8 +189,11 @@ async function loadAdminData(container) {
 
 function attachUserActions(container) {
   container.addEventListener('click', async (e) => {
-    const action = e.target.dataset.action;
-    const userId = e.target.dataset.id;
+    const actionTrigger = e.target.closest('[data-action][data-id]');
+    if (!actionTrigger) return;
+
+    const action = actionTrigger.dataset.action;
+    const userId = actionTrigger.dataset.id;
     if (!action || !userId) return;
 
     try {
@@ -225,7 +228,10 @@ function attachPhotoActions(container) {
   });
 
   container.addEventListener('click', async (e) => {
-    const action = e.target.dataset.action;
+    const actionTrigger = e.target.closest('[data-action]');
+    if (!actionTrigger) return;
+
+    const action = actionTrigger.dataset.action;
     if (!action) return;
 
     try {
@@ -271,7 +277,7 @@ async function initializeAdminPanel(container) {
 
   const isAdmin = await userHasRole('admin');
   if (!isAdmin) {
-    router.navigate('/dashboard');
+    router.navigate('/users');
     return;
   }
 

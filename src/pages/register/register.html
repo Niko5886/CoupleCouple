@@ -1,4 +1,4 @@
-<section class="auth-page auth-page--register">
+<section class="auth-page auth-page--register container-fluid px-3 px-lg-4">
   <div class="auth-card">
     <div class="auth-card__header">
       <p class="auth-card__eyebrow">Join us</p>
@@ -6,24 +6,27 @@
       <p class="auth-card__subtitle">Sign up to get started with Couple2Couple.</p>
     </div>
 
-    <form class="auth-form" data-auth-form>
+    <form class="auth-form" data-auth-form aria-describedby="register-status">
       <label class="auth-field">
-        <span>Email</span>
-        <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required />
+        <span class="form-label mb-1">Email</span>
+        <input class="form-control" id="register-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required />
       </label>
 
       <label class="auth-field">
-        <span>Password</span>
-        <input type="password" name="password" placeholder="Create a strong password" autocomplete="new-password" required />
+        <span class="form-label mb-1">Password</span>
+        <input class="form-control" id="register-password" type="password" name="password" placeholder="Create a strong password" autocomplete="new-password" required />
       </label>
 
       <label class="auth-field">
-        <span>Confirm Password</span>
-        <input type="password" name="confirmPassword" placeholder="Confirm your password" autocomplete="new-password" required />
+        <span class="form-label mb-1">Confirm Password</span>
+        <input class="form-control" id="register-confirm-password" type="password" name="confirmPassword" placeholder="Confirm your password" autocomplete="new-password" required />
       </label>
 
-      <button class="auth-button" type="submit">Create Account</button>
-      <p class="auth-status" role="status" aria-live="polite" data-auth-status></p>
+      <button class="auth-button btn btn-primary w-100" type="submit">
+        <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+        Create Account
+      </button>
+      <p class="auth-status small" id="register-status" role="status" aria-live="polite" data-auth-status></p>
     </form>
 
     <div class="auth-card__footer">
@@ -31,22 +34,22 @@
     </div>
 
     <div class="test-credentials" data-test-creds>
-      <button type="button" class="test-creds-toggle" data-toggle-creds>
+      <button type="button" class="test-creds-toggle" data-toggle-creds aria-expanded="false" aria-controls="register-creds-list">
         <span class="toggle-icon">▼</span>
         Test Credentials
       </button>
-      <div class="test-creds-list" data-creds-list style="display: none;">
+      <div class="test-creds-list" id="register-creds-list" data-creds-list hidden>
         <div class="test-cred-item">
           <p class="test-cred-label">Admin Account:</p>
           <p class="test-cred-text">Email: <strong>nik@gmail.com</strong></p>
           <p class="test-cred-text">Password: <strong>Password123!</strong></p>
-          <button type="button" class="use-cred-btn" data-use-admin>Use Admin</button>
+            <button type="button" class="use-cred-btn btn btn-outline-primary btn-sm" data-use-admin>Use Admin</button>
         </div>
         <div class="test-cred-item">
           <p class="test-cred-label">User Account:</p>
           <p class="test-cred-text">Email: <strong>maria@gmail.com</strong></p>
           <p class="test-cred-text">Password: <strong>Password123!</strong></p>
-          <button type="button" class="use-cred-btn" data-use-user>Use User</button>
+            <button type="button" class="use-cred-btn btn btn-outline-primary btn-sm" data-use-user>Use User</button>
         </div>
       </div>
     </div>

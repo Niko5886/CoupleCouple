@@ -1,5 +1,5 @@
-import './dashboard.css';
-import dashboardTemplate from './dashboard.html?raw';
+import './users.css';
+import usersTemplate from './users.html?raw';
 import { supabase } from '../../services/supabaseClient.js';
 
 const AVATAR_EMOJIS = ['👨', '👩', '🧑', '👨‍🦱', '👩‍🦱', '🧑‍🦱'];
@@ -11,11 +11,11 @@ function getAvatarEmoji(userId) {
 
 function createUserCard(user, navigateToProfile) {
   const card = document.createElement('div');
-  card.className = 'user-card';
-  card.style.cursor = 'pointer';
+  card.className = 'user-card card h-100';
   card.dataset.userId = user.id;
-
-  const statusClass = user.is_online ? 'online' : 'offline';
+  card.tabIndex = 0;
+  card.setAttribute('role', 'link');
+  card.setAttribute('aria-label', `Отвори профила на ${user.username || 'потребител'}`);
   
   // Try to create string for age and gender like "37+43 Jahre ⚥"
   const ageStr = user.age ? `${user.age} Years` : 'Age unknown';
@@ -24,7 +24,9 @@ function createUserCard(user, navigateToProfile) {
   else if (user.gender === 'female') genderSymbol = '♀';
   else if (user.gender === 'couple') genderSymbol = '⚥';
   
-  const locationStr = user.city ? `<div class="user-location">${user.city}</div>` : '';
+  const locationStr = user.city
+    ? `<div class="user-location"><i class="bi bi-geo-alt me-1"></i>${user.city}</div>`
+    : '';
 
   card.innerHTML = `
     <div class="user-card-image">
@@ -33,10 +35,10 @@ function createUserCard(user, navigateToProfile) {
     <div class="user-card-info">
       <div class="user-name">
         ${user.username || 'User'}
-        ${user.is_online ? `<span class="status-dot tooltip" title="Online"></span>` : ''}
+        ${user.is_online ? `<span class="status-dot" title="Online"></span>` : ''}
       </div>
       <div class="user-details">
-        <span>${ageStr} ${genderSymbol}</span>
+        <span><i class="bi bi-person-vcard me-1"></i>${ageStr} ${genderSymbol}</span>
       </div>
       ${locationStr}
     </div>
@@ -44,6 +46,13 @@ function createUserCard(user, navigateToProfile) {
 
   card.addEventListener('click', () => {
     navigateToProfile(user.id);
+  });
+
+  card.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigateToProfile(user.id);
+    }
   });
 
   return card;
@@ -54,7 +63,7 @@ async function loadUsers(page, navigateToProfile) {
   const noUsersMsg = page.querySelector('.no-users-message');
 
   try {
-    grid.innerHTML = '<div class="loading-message">Loading users...</div>';
+    grid.innerHTML = '<div class="loading-message"><div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>Loading users...</div>';
 
     const { data, error } = await supabase.rpc('get_registered_users');
 
@@ -64,12 +73,12 @@ async function loadUsers(page, navigateToProfile) {
 
     if (!data || data.length === 0) {
       grid.innerHTML = '';
-      noUsersMsg.style.display = 'block';
+      noUsersMsg.hidden = false;
       return;
     }
 
     grid.innerHTML = '';
-    noUsersMsg.style.display = 'none';
+    noUsersMsg.hidden = true;
 
     data.forEach((user) => {
       const card = createUserCard(user, navigateToProfile);
@@ -77,7 +86,7 @@ async function loadUsers(page, navigateToProfile) {
     });
   } catch (error) {
     console.error('Error loading users:', error);
-    grid.innerHTML = '<div class="loading-message">Error loading users. Please try again.</div>';
+    grid.innerHTML = '<div class="loading-message text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error loading users. Please try again.</div>';
   }
 }
 
@@ -90,9 +99,9 @@ function setupRealtimeUpdates(page, navigateToProfile) {
     .subscribe();
 }
 
-export function renderDashboardPage(context = {}) {
+export function renderUsersPage(context = {}) {
   const wrapper = document.createElement('div');
-  wrapper.innerHTML = dashboardTemplate;
+  wrapper.innerHTML = usersTemplate;
   const page = wrapper.firstElementChild;
   const navigateToProfile = (userId) => {
     if (context?.router) {

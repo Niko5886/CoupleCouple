@@ -1,5 +1,5 @@
 import { renderHomePage } from '../pages/index/index.js';
-import { renderDashboardPage } from '../pages/dashboard/dashboard.js';
+import { renderUsersPage } from '../pages/users/users.js';
 import { renderLoginPage } from '../pages/login/login.js';
 import { renderRegisterPage } from '../pages/register/register.js';
 import { renderAdminPage } from '../pages/admin/admin.js';
@@ -14,8 +14,8 @@ export const appRoutes = [
     requiredRole: null
   },
   {
-    path: '/dashboard',
-    render: renderDashboardPage,
+    path: '/users',
+    render: renderUsersPage,
     implemented: true,
     protected: true,
     requiredRole: null
@@ -34,7 +34,6 @@ export const appRoutes = [
     protected: false,
     requiredRole: null
   },
-  { path: '/users', implemented: false, protected: true, requiredRole: null },
   { path: '/messages', implemented: false, protected: true, requiredRole: null },
   { path: '/search', implemented: false, protected: true, requiredRole: null },
   { path: '/friends', implemented: false, protected: true, requiredRole: null },

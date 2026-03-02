@@ -1,21 +1,21 @@
 .admin-page {
-  display: grid;
-  place-items: center;
-  min-height: calc(100vh - 220px);
+  min-height: calc(100vh - 64px);
+  padding: 1.5rem 0.75rem;
 }
 
 .admin-card {
-  width: min(680px, 100%);
-  background: #ffffff;
-  border: 1px solid #ecd3a3;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  background: rgba(7, 12, 20, 0.78);
+  border: 1px solid #1b2a3e;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
 }
 
 .admin-eyebrow {
   margin: 0 0 0.5rem;
-  color: #8b5a10;
+  color: #8eb7f1;
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -24,16 +24,17 @@
 
 .admin-card h1 {
   margin: 0;
+  color: #f5f7fb;
 }
 
 .admin-subtitle {
   margin: 0.5rem 0 1rem;
-  color: #5f6368;
+  color: #b8c6db;
 }
 
 .admin-status {
   margin: 0 0 1rem;
-  color: #5f6368;
+  color: #8fa6c5;
 }
 
 .admin-status--success {
@@ -42,20 +43,27 @@
 }
 
 .admin-content {
-  border-top: 1px solid #e8eaed;
+  border-top: 1px solid #1b2a3e;
   padding-top: 1rem;
 }
 
 .admin-content p {
   margin: 0.5rem 0;
+  color: #d4deee;
 }
 
 .admin-section {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   padding: 1rem;
-  border: 1px solid #e8eaed;
-  border-radius: 10px;
-  background: #fafbfc;
+  border: 1px solid #223654;
+  border-radius: 12px;
+  background: rgba(12, 19, 30, 0.72);
+}
+
+.admin-section h2 {
+  margin: 0 0 0.6rem;
+  color: #f5f7fb;
+  font-size: 1.05rem;
 }
 
 .admin-section__header {
@@ -66,39 +74,43 @@
 }
 
 .admin-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  margin: 0;
 }
 
 .stat-card {
-  background: #fff;
-  border: 1px solid #e8eaed;
-  border-radius: 10px;
+  background: rgba(9, 16, 27, 0.82);
+  border: 1px solid #273c5e;
+  border-radius: 12px;
   padding: 0.75rem 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
 }
 
 .stat-card p {
   margin: 0;
-  color: #5f6368;
+  color: #9fb2cd;
   font-size: 0.9rem;
 }
 
 .stat-card strong {
   font-size: 1.6rem;
-  color: #162436;
+  color: #f5f7fb;
 }
 
 .admin-list-card {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid #e8eaed;
-  border-radius: 10px;
+  border: 1px solid #273c5e;
+  border-radius: 12px;
   padding: 1rem;
-  background: #fff;
+  background: rgba(9, 16, 27, 0.72);
   margin-bottom: 0.75rem;
+}
+
+.admin-list-card h3 {
+  margin: 0.1rem 0 0.35rem;
+  color: #f5f7fb;
+  font-size: 1.05rem;
 }
 
 .admin-actions {
@@ -111,9 +123,9 @@
 .admin-actions button,
 .photo-actions button {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d0d4d9;
+  border: 1px solid #39537b;
   border-radius: 8px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -133,9 +145,10 @@
 .btn-primary:hover { background: #1d4ed8; }
 .btn-danger:hover { background: #b91c1c; }
 
-.muted { color: #5f6368; font-size: 0.9rem; }
-.text-danger { color: #b91c1c; }
-.eyebrow { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; color: #6b7280; margin: 0; }
+.eyebrow { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; color: #8fa6c5; margin: 0; }
+
+.muted { color: #9fb2cd; font-size: 0.9rem; }
+.text-danger { color: #f87171; }
 
 .photo-actions { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
 
@@ -146,10 +159,10 @@
 }
 
 .photo-card {
-  border: 1px solid #e8eaed;
-  border-radius: 10px;
+  border: 1px solid #273c5e;
+  border-radius: 12px;
   padding: 0.75rem;
-  background: #fff;
+  background: rgba(9, 16, 27, 0.72);
 }
 
 .photo-card img {
@@ -163,11 +176,15 @@
 .checkbox { display: flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; }
 
 .audit-row, .history-row, .notification-row {
-  border-bottom: 1px solid #e8eaed;
-  padding: 0.5rem 0;
+  border-bottom: 1px solid #223654;
+  padding: 0.65rem 0;
 }
 
 @media (max-width: 640px) {
+  .admin-page {
+    padding: 1rem 0.5rem;
+  }
+
   .admin-actions { flex-direction: row; flex-wrap: wrap; }
   .photo-actions { flex-direction: column; }
 }

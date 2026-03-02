@@ -36,7 +36,7 @@ a {
   flex: 1;
 }
 
-.app-content:has(.dashboard-page),
+.app-content:has(.users-page),
 .app-content:has(.public-profile-page) {
   width: calc(100% - 240px);
   max-width: none;
@@ -46,6 +46,20 @@ a {
 /* Adjust content when sidebar is hidden */
 .app-shell:not(:has(.app-sidebar[style*="display: block"])) .app-content {
   margin-left: auto;
+}
+
+@media (max-width: 991.98px) {
+  .app-content {
+    width: min(1000px, 100% - 1rem);
+    margin: 0 auto;
+  }
+
+  .app-content:has(.users-page),
+  .app-content:has(.public-profile-page) {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
 }
 
 

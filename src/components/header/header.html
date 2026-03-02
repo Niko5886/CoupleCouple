@@ -1,43 +1,66 @@
-<header class="app-header">
-  <div class="app-header__inner">
-    <a class="app-logo" href="/" data-nav-link><span class="logo-text">Couple</span><span class="logo-heart-container"><span class="logo-heart">❤️</span><span class="logo-heart-digit">2</span></span><span class="logo-text">Couple</span></a>
+<header class="app-header navbar navbar-dark">
+  <div class="container-fluid app-header__inner">
+    <div class="d-flex align-items-center gap-2">
+      <button
+        class="btn btn-outline-light app-menu-btn d-lg-none"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#appSidebar"
+        aria-controls="appSidebar"
+        aria-label="Отвори менюто"
+        title="Отвори менюто"
+        data-sidebar-toggle
+      >
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+
+      <a class="app-logo navbar-brand" href="/" data-nav-link>
+        <span class="logo-text">Couple</span>
+        <span class="logo-heart-container"><span class="logo-heart">❤️</span><span class="logo-heart-digit">2</span></span>
+        <span class="logo-text">Couple</span>
+      </a>
+    </div>
+
     <div class="app-header__actions" data-auth-actions></div>
   </div>
 </header>
 
-<aside class="app-sidebar" data-sidebar>
-  <nav class="app-sidebar__nav" aria-label="Main navigation">
-    <a href="/" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">🏠</span>
-      <span class="app-sidebar__text">Начало</span>
-    </a>
-    <a href="/dashboard" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">📊</span>
-      <span class="app-sidebar__text">Dashboard</span>
-    </a>
-    <a href="/users" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">👥</span>
-      <span class="app-sidebar__text">Users</span>
-    </a>
-    <a href="/messages" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">✉️</span>
-      <span class="app-sidebar__text">Messages</span>
-    </a>
-    <a href="/search" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">🔍</span>
-      <span class="app-sidebar__text">Search</span>
-    </a>
-    <a href="/friends" class="app-sidebar__link" data-nav-link data-protected>
-      <span class="app-sidebar__icon">❤️</span>
-      <span class="app-sidebar__text">Friends</span>
-    </a>
-    <a href="#" class="app-sidebar__link" data-profile-edit data-protected>
-      <span class="app-sidebar__icon">🙋</span>
-      <span class="app-sidebar__text">My Profile</span>
-    </a>
-    <a href="/admin" class="app-sidebar__link" data-nav-link data-protected data-admin-only>
-      <span class="app-sidebar__icon">⚙️</span>
-      <span class="app-sidebar__text">Admin</span>
-    </a>
-  </nav>
+<aside class="app-sidebar offcanvas offcanvas-start offcanvas-lg" tabindex="-1" id="appSidebar" data-sidebar aria-labelledby="appSidebarLabel">
+  <div class="offcanvas-header d-lg-none">
+    <h5 class="offcanvas-title" id="appSidebarLabel">Навигация</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <div class="offcanvas-body p-0">
+    <nav class="app-sidebar__nav nav flex-column" aria-label="Main navigation">
+      <a href="/" class="app-sidebar__link nav-link" data-nav-link data-protected>
+        <i class="bi bi-house-door app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Начало</span>
+      </a>
+      <a href="/users" class="app-sidebar__link nav-link" data-nav-link data-protected>
+        <i class="bi bi-people app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Users</span>
+      </a>
+      <a href="/messages" class="app-sidebar__link nav-link" data-nav-link data-protected>
+        <i class="bi bi-chat-left-text app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Messages</span>
+      </a>
+      <a href="/search" class="app-sidebar__link nav-link" data-nav-link data-protected>
+        <i class="bi bi-search app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Search</span>
+      </a>
+      <a href="/friends" class="app-sidebar__link nav-link" data-nav-link data-protected>
+        <i class="bi bi-heart app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Friends</span>
+      </a>
+      <a href="#" class="app-sidebar__link nav-link" data-profile-edit data-protected>
+        <i class="bi bi-person-badge app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">My Profile</span>
+      </a>
+      <a href="/admin" class="app-sidebar__link nav-link" data-nav-link data-protected data-admin-only>
+        <i class="bi bi-shield-lock app-sidebar__icon" aria-hidden="true"></i>
+        <span class="app-sidebar__text">Admin</span>
+      </a>
+    </nav>
+  </div>
 </aside>

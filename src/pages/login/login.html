@@ -1,27 +1,27 @@
-<section class="auth-page auth-page--login">
+<section class="auth-page auth-page--login container-fluid px-3 px-lg-4">
   <div class="auth-split">
 
     <!-- LEFT: Info blocks -->
     <div class="auth-info">
-      <div class="info-block" style="--i:0">
+      <div class="info-block">
         <span class="info-icon">🔒</span>
         <h3>Само за пълнолетни двойки</h3>
         <p>Ексклузивно пространство за двойки 18+, които търсят дискретни запознанства със сходни интереси. Свързвайте се, споделяйте в личен чат и планирайте срещи при ясни граници и взаимно уважение.</p>
       </div>
 
-      <div class="info-block" style="--i:1">
+      <div class="info-block">
         <span class="info-icon">🛡️</span>
         <h3>Създадено с фокус върху дискретността</h3>
         <p>Профилите и снимките са защитени. Всеки профил и изображение се преглеждат от администратор преди публикуване.</p>
       </div>
 
-      <div class="info-block" style="--i:2">
+      <div class="info-block">
         <span class="info-icon">💬</span>
         <h3>Контрол, поверителност и съгласие</h3>
         <p>Търсете двойки, изпращайте съобщения и координирайте срещи с пълен контрол върху личната ви информация и при взаимно съгласие.</p>
       </div>
 
-      <div class="info-block" style="--i:3">
+      <div class="info-block">
         <span class="info-icon">✅</span>
         <h3>Строга верификация</h3>
         <ul>
@@ -38,19 +38,22 @@
         <h1>Login</h1>
       </div>
 
-      <form class="auth-form" data-auth-form>
+      <form class="auth-form" data-auth-form aria-describedby="login-status">
         <label class="auth-field">
-          <span>Email</span>
-          <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required />
+          <span class="form-label mb-1">Email</span>
+          <input class="form-control" id="login-email" type="email" name="email" placeholder="you@email.com" autocomplete="email" required />
         </label>
 
         <label class="auth-field">
-          <span>Password</span>
-          <input type="password" name="password" placeholder="Your password" autocomplete="current-password" required />
+          <span class="form-label mb-1">Password</span>
+          <input class="form-control" id="login-password" type="password" name="password" placeholder="Your password" autocomplete="current-password" required />
         </label>
 
-        <button class="auth-button" type="submit">Sign in</button>
-        <p class="auth-status" role="status" aria-live="polite" data-auth-status></p>
+        <button class="auth-button btn btn-primary w-100" type="submit">
+          <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
+          Sign in
+        </button>
+        <p class="auth-status small" id="login-status" role="status" aria-live="polite" data-auth-status></p>
       </form>
 
       <div class="auth-card__footer">
@@ -58,22 +61,22 @@
       </div>
 
       <div class="test-credentials" data-test-creds>
-        <button type="button" class="test-creds-toggle" data-toggle-creds>
+        <button type="button" class="test-creds-toggle" data-toggle-creds aria-expanded="false" aria-controls="login-creds-list">
           <span class="toggle-icon">▼</span>
           Test Credentials
         </button>
-        <div class="test-creds-list" data-creds-list style="display: none;">
+        <div class="test-creds-list" id="login-creds-list" data-creds-list hidden>
           <div class="test-cred-item">
             <p class="test-cred-label">Admin Account:</p>
             <p class="test-cred-text">Email: <strong>nik@gmail.com</strong></p>
             <p class="test-cred-text">Password: <strong>Password123!</strong></p>
-            <button type="button" class="use-cred-btn" data-use-admin>Use Admin</button>
+            <button type="button" class="use-cred-btn btn btn-outline-primary btn-sm" data-use-admin>Use Admin</button>
           </div>
           <div class="test-cred-item">
             <p class="test-cred-label">User Account:</p>
             <p class="test-cred-text">Email: <strong>maria@gmail.com</strong></p>
             <p class="test-cred-text">Password: <strong>Password123!</strong></p>
-            <button type="button" class="use-cred-btn" data-use-user>Use User</button>
+            <button type="button" class="use-cred-btn btn btn-outline-primary btn-sm" data-use-user>Use User</button>
           </div>
         </div>
       </div>

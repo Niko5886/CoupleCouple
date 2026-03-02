@@ -76,8 +76,9 @@ function bindTestCredentials(container) {
   // Toggle credentials visibility
   toggleBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const isHidden = credsList.style.display === 'none';
-    credsList.style.display = isHidden ? 'block' : 'none';
+    const isHidden = credsList.hidden;
+    credsList.hidden = !isHidden;
+    toggleBtn.setAttribute('aria-expanded', String(isHidden));
     const icon = toggleBtn.querySelector('.toggle-icon');
     icon.textContent = isHidden ? '▲' : '▼';
   });

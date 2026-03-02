@@ -31,9 +31,9 @@
         <section class="public-profile-card" data-actions-section>
           <h2>Действия</h2>
           <div class="public-profile-actions">
-            <button type="button" class="profile-action-btn" data-action="message">Съобщение</button>
-            <button type="button" class="profile-action-btn" data-action="friend">Добави приятел</button>
-            <button type="button" class="profile-action-btn" data-action="like">Харесай профила</button>
+            <button type="button" class="profile-action-btn btn btn-outline-primary btn-sm" data-action="message"><i class="bi bi-chat-left-text me-1"></i>Съобщение</button>
+            <button type="button" class="profile-action-btn btn btn-outline-info btn-sm" data-action="friend"><i class="bi bi-person-plus me-1"></i>Добави приятел</button>
+            <button type="button" class="profile-action-btn btn btn-outline-danger btn-sm" data-action="like"><i class="bi bi-heart me-1"></i>Харесай профила</button>
           </div>
         </section>
 
@@ -51,8 +51,8 @@
         <section class="public-profile-card">
           <div class="card-header-flex">
             <h2>Снимки</h2>
-            <button class="add-btn" data-add-photo style="display: none;" title="Добави снимка">➕</button>
-            <input type="file" data-photo-input accept="image/*" style="display: none;" />
+            <button class="add-btn btn btn-primary btn-sm" data-add-photo hidden title="Добави снимка"><i class="bi bi-plus-lg"></i></button>
+            <input type="file" data-photo-input accept="image/*" hidden />
           </div>
           <div class="public-profile-gallery" data-gallery></div>
         </section>

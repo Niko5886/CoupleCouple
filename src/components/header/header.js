@@ -10,6 +10,7 @@ export function createHeader(router, activePath) {
 
   const header = wrapper.querySelector('.app-header');
   const sidebar = wrapper.querySelector('.app-sidebar');
+  const sidebarToggle = wrapper.querySelector('[data-sidebar-toggle]');
   const links = wrapper.querySelectorAll('[data-nav-link]');
   const authActions = wrapper.querySelector('[data-auth-actions]');
   const profileEditLink = wrapper.querySelector('[data-profile-edit]');
@@ -18,6 +19,9 @@ export function createHeader(router, activePath) {
   links.forEach((link) => {
     if (link.getAttribute('href') === activePath) {
       link.classList.add('is-active');
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
     }
 
     link.addEventListener('click', (event) => {
@@ -28,6 +32,13 @@ export function createHeader(router, activePath) {
 
       event.preventDefault();
       router.navigate(href);
+
+      if (sidebar && window.bootstrap?.Offcanvas) {
+        const offcanvas = window.bootstrap.Offcanvas.getInstance(sidebar);
+        if (offcanvas) {
+          offcanvas.hide();
+        }
+      }
     });
   });
 
@@ -64,6 +75,10 @@ export function createHeader(router, activePath) {
         sidebar.style.display = user ? 'block' : 'none';
       }
 
+      if (sidebarToggle) {
+        sidebarToggle.style.display = user ? 'inline-flex' : 'none';
+      }
+
       if (authActions) {
         authActions.innerHTML = '';
 
@@ -77,10 +92,20 @@ export function createHeader(router, activePath) {
             userInfo.className = 'auth-user-info';
             userInfo.style.cursor = 'pointer';
             userInfo.title = 'Виж профила';
+            userInfo.tabIndex = 0;
+            userInfo.setAttribute('role', 'link');
+            userInfo.setAttribute('aria-label', 'Отвори моя профил');
             
             // Make user info clickable to open profile modal
             userInfo.addEventListener('click', () => {
               router.navigate(`/profile/${user.id}`);
+            });
+
+            userInfo.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                router.navigate(`/profile/${user.id}`);
+              }
             });
             
             // Avatar
@@ -116,7 +141,7 @@ export function createHeader(router, activePath) {
           }
 
           const logoutBtn = document.createElement('button');
-          logoutBtn.className = 'auth-logout-btn';
+          logoutBtn.className = 'auth-logout-btn btn btn-danger btn-sm';
           logoutBtn.textContent = 'Logout';
           logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -129,7 +154,7 @@ export function createHeader(router, activePath) {
         } else {
           // User is not authenticated
           const loginLink = document.createElement('a');
-          loginLink.className = 'auth-link';
+          loginLink.className = 'auth-link btn btn-outline-light btn-sm';
           loginLink.href = '/login';
           loginLink.textContent = 'Login';
           loginLink.addEventListener('click', (e) => {
@@ -139,7 +164,7 @@ export function createHeader(router, activePath) {
           authActions.append(loginLink);
 
           const registerLink = document.createElement('a');
-          registerLink.className = 'auth-link';
+          registerLink.className = 'auth-link btn btn-primary btn-sm';
           registerLink.href = '/register';
           registerLink.textContent = 'Register';
           registerLink.addEventListener('click', (e) => {
@@ -168,6 +193,14 @@ export function createHeader(router, activePath) {
       e.preventDefault();
       const user = getAuthUser();
       if (!user) return;
+
+      if (sidebar && window.bootstrap?.Offcanvas) {
+        const offcanvas = window.bootstrap.Offcanvas.getInstance(sidebar);
+        if (offcanvas) {
+          offcanvas.hide();
+        }
+      }
+
       router.navigate(`/profile/${user.id}`);
     });
   }

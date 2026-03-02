@@ -1,0 +1,80 @@
+:root {
+  --bs-body-color: #d4deee;
+  --bs-body-bg: #0b1220;
+  --bs-border-color: #1b2a3e;
+  --bs-secondary-color: #a0aec0;
+
+  --bs-primary: #4f8fdf;
+  --bs-primary-rgb: 79, 143, 223;
+  --bs-secondary: #223654;
+  --bs-secondary-rgb: 34, 54, 84;
+  --bs-success: #4caf50;
+  --bs-info: #60a5fa;
+  --bs-warning: #f59e0b;
+  --bs-danger: #ef4444;
+  --bs-light: #f5f7fb;
+  --bs-dark: #0b1220;
+
+  --bs-link-color: #8eb7f1;
+  --bs-link-hover-color: #b8d3f8;
+  --bs-border-radius: 0.75rem;
+  --bs-border-radius-sm: 0.5rem;
+  --bs-border-radius-lg: 1rem;
+  --bs-border-radius-pill: 50rem;
+
+  --bs-font-sans-serif: Arial, sans-serif;
+}
+
+.btn-primary {
+  --bs-btn-bg: #2563eb;
+  --bs-btn-border-color: #2563eb;
+  --bs-btn-hover-bg: #1d4ed8;
+  --bs-btn-hover-border-color: #1d4ed8;
+  --bs-btn-active-bg: #1e40af;
+  --bs-btn-active-border-color: #1e40af;
+  --bs-btn-focus-shadow-rgb: 37, 99, 235;
+}
+
+.card,
+.modal-content,
+.offcanvas {
+  background: rgba(11, 18, 32, 0.78);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #d4deee;
+}
+
+.form-control,
+.form-select {
+  background: rgba(22, 36, 54, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.form-control::placeholder {
+  color: #64748b;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+  background: rgba(22, 36, 54, 0.75);
+  color: #ffffff;
+}
+
+.table {
+  --bs-table-color: #d4deee;
+  --bs-table-bg: transparent;
+  --bs-table-border-color: #1b2a3e;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+  --bs-table-hover-bg: rgba(79, 143, 223, 0.08);
+}
+
+.alert {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+:where(a, button, input, select, textarea, [role='button'], [role='link']):focus-visible {
+  outline: 2px solid #8eb7f1;
+  outline-offset: 2px;
+}
