@@ -1,7 +1,7 @@
 ﻿<section class="admin-page container py-4">
   <div class="admin-header d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom border-secondary pb-3 mb-4">
     <div class="mb-3 mb-md-0">
-      <p class="admin-eyebrow text-uppercase text-primary fw-bold mb-1" style="letter-spacing: 1px; font-size: 0.85rem;"><i class="bi bi-shield-lock me-2"></i>Administration</p>
+      <p class="admin-eyebrow text-uppercase text-primary fw-bold mb-1"><i class="bi bi-shield-lock me-2"></i>Administration</p>
       <h1 class="text-white mb-0 display-6">Контролен Панел</h1>
       <p class="text-muted small mt-1 mb-0">Пълен контрол върху платформата CoupleCouple.</p>
     </div>
@@ -22,22 +22,22 @@
     <!-- Admin Navigation Tabs -->
     <ul class="nav nav-tabs custom-admin-tabs mb-4 px-2 border-secondary" id="adminTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active bg-transparent text-white border-0 border-bottom border-primary border-3" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats-panel" type="button" role="tab" style="border-radius:0;">
+        <button class="nav-link active bg-transparent text-white border-0 border-bottom border-primary border-3 admin-tab-btn" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats-panel" type="button" role="tab">
           <i class="bi bi-graph-up me-2"></i>Статистика
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-panel" type="button" role="tab" style="border-radius:0;" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
+        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3 admin-tab-btn" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-panel" type="button" role="tab" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
           <i class="bi bi-hourglass-split me-2"></i>Чакащи
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-panel" type="button" role="tab" style="border-radius:0;" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
+        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3 admin-tab-btn" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-panel" type="button" role="tab" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
           <i class="bi bi-people me-2"></i>Потребители
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-panel" type="button" role="tab" style="border-radius:0;" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
+        <button class="nav-link bg-transparent text-muted border-0 border-bottom border-transparent border-3 admin-tab-btn" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-panel" type="button" role="tab" onmouseover="this.classList.add('text-white')" onmouseout="if(!this.classList.contains('active')) this.classList.remove('text-white')">
           <i class="bi bi-journal-code me-2"></i>Логове
         </button>
       </li>
@@ -66,7 +66,7 @@
                 <p class="text-muted small mb-0 mt-1">Pending → In Review → Approved/Rejected</p>
               </div>
               <div class="card-body p-0">
-                <div class="users-scroll-container" style="max-height: 500px; overflow-y: auto;" data-users-list></div>
+                <div class="users-scroll-container admin-scroll-500" data-users-list></div>
               </div>
             </div>
           </div>
@@ -97,7 +97,7 @@
               </div>
               <div class="col-12 col-md-6 text-md-end">
                   <!-- Search bar (placeholder if needed later) -->
-                  <div class="input-group ms-md-auto" style="max-width: 300px;">
+                  <div class="input-group ms-md-auto admin-search-group">
                       <span class="input-group-text bg-secondary border-0 text-white"><i class="bi bi-search"></i></span>
                       <input type="text" id="adminUserSearch" class="form-control bg-dark border-secondary text-white" placeholder="Търси (скоро)..." disabled>
                   </div>
@@ -133,7 +133,7 @@
                     <h6 class="text-white mb-0"><i class="bi bi-bell text-warning me-2"></i>Нотификации</h6>
                 </div>
                 <div class="card-body p-0">
-                    <div class="logs-scroll-container list-group list-group-flush rounded-0" style="max-height: 400px; overflow-y: auto;" data-admin-notifications></div>
+                    <div class="logs-scroll-container list-group list-group-flush rounded-0 admin-scroll-400" data-admin-notifications></div>
                 </div>
              </div>
           </div>
@@ -143,7 +143,7 @@
                     <h6 class="text-white mb-0"><i class="bi bi-shield-check text-success me-2"></i>Audit Log</h6>
                 </div>
                 <div class="card-body p-0">
-                    <div class="logs-scroll-container list-group list-group-flush rounded-0" style="max-height: 400px; overflow-y: auto;" data-audit-log></div>
+                    <div class="logs-scroll-container list-group list-group-flush rounded-0 admin-scroll-400" data-audit-log></div>
                 </div>
              </div>
           </div>
@@ -153,7 +153,7 @@
                     <h6 class="text-white mb-0"><i class="bi bi-clock-history text-info me-2"></i>Профилни промени</h6>
                 </div>
                 <div class="card-body p-0">
-                    <div class="logs-scroll-container list-group list-group-flush rounded-0" style="max-height: 400px; overflow-y: auto;" data-profile-history></div>
+                    <div class="logs-scroll-container list-group list-group-flush rounded-0 admin-scroll-400" data-profile-history></div>
                 </div>
              </div>
           </div>

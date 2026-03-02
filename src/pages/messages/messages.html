@@ -30,7 +30,7 @@
       
       <!-- Empty State / No Chat Selected -->
       <div id="emptyChatState" class="h-100 d-flex flex-column align-items-center justify-content-center text-muted p-4 w-100 position-absolute top-0 start-0 bg-dark z-2">
-        <div class="rounded-circle bg-secondary bg-opacity-25 p-4 mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+        <div class="rounded-circle bg-secondary bg-opacity-25 p-4 mb-3 d-flex align-items-center justify-content-center empty-chat-icon-wrap">
           <i class="bi bi-chat-square-heart text-secondary fs-1"></i>
         </div>
         <h4>Вашите съобщения</h4>
@@ -38,12 +38,12 @@
       </div>
 
       <!-- Chat Header -->
-      <div id="chatHeader" class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 d-flex align-items-center justify-content-between d-none" style="min-height: 72px;">
+      <div id="chatHeader" class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 d-flex align-items-center justify-content-between d-none chat-header-min-height">
         <div class="d-flex align-items-center">
-          <button class="btn btn-sm btn-link text-white-50 p-0 me-3 d-md-none d-block" id="backToContactsBtn">
+          <button class="btn btn-sm btn-link text-white-50 p-0 me-3 d-md-none d-block" id="backToContactsBtn" title="Назад към контактите" aria-label="Назад към контактите">
             <i class="bi bi-chevron-left fs-5"></i>
           </button>
-          <img src="" id="chatAvatar" class="rounded-circle border border-primary me-3 object-fit-cover" style="width: 42px; height: 42px;" alt="Avatar">
+          <img src="" id="chatAvatar" class="rounded-circle border border-primary me-3 object-fit-cover chat-avatar" alt="Avatar">
           <div class="flex-grow-1 lh-sm cursor-pointer" id="chatProfileLink" title="Виж профила">
             <h6 class="mb-0 text-white fw-bold" id="chatUsername">...</h6>
             <small class="text-white-50" id="chatStatus">...</small>
@@ -51,20 +51,20 @@
         </div>
         <div>
           <!-- Options menu could go here -->
-          <button class="btn btn-link text-muted"><i class="bi bi-three-dots-vertical"></i></button>
+          <button class="btn btn-link text-muted" title="Още опции" aria-label="Още опции"><i class="bi bi-three-dots-vertical"></i></button>
         </div>
       </div>
 
       <!-- Messages Flow -->
-      <div id="messagesFlow" class="flex-grow-1 overflow-y-auto p-3 d-none position-relative" style="background-image: url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.02\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E');">
+      <div id="messagesFlow" class="flex-grow-1 overflow-y-auto p-3 d-none position-relative messages-flow-bg">
         <!-- Messages injected here -->
       </div>
 
       <!-- Chat Input Area -->
       <div id="chatInputArea" class="p-3 bg-dark border-top border-secondary d-none">
         <form id="sendMessageForm" class="d-flex align-items-end gap-2">
-          <textarea id="messageInput" class="form-control bg-transparent border-secondary text-white custom-scrollbar resizable-none" rows="1" placeholder="Напиши съобщение..." style="resize: none; max-height: 120px; overflow-y: hidden;"></textarea>
-          <button type="submit" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; padding: 0;">
+          <textarea id="messageInput" class="form-control bg-transparent border-secondary text-white custom-scrollbar resizable-none message-input" rows="1" placeholder="Напиши съобщение..."></textarea>
+          <button type="submit" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 send-btn" title="Изпрати съобщение" aria-label="Изпрати съобщение">
             <i class="bi bi-send-fill ms-1 mt-1"></i>
           </button>
         </form>

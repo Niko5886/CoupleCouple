@@ -8,8 +8,8 @@
 .auth-card {
   width: min(480px, 100%);
   background: rgba(11, 18, 32, 0.85); /* Dark background matching header */
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 2.5rem;
