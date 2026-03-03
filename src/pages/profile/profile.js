@@ -134,16 +134,168 @@ function renderTags(container, items, isEditable = false, tagField = '') {
 
 function renderGallery(container, photos) {
   if (!Array.isArray(photos) || photos.length === 0) {
+    container.dataset.galleryMode = 'empty';
+    container.dataset.currentIndex = '0';
     container.innerHTML = '<p class="public-profile-empty">Няма видими снимки.</p>';
     return;
   }
 
-  container.innerHTML = photos
-    .map(
-      (photo) =>
-        `<img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка" loading="lazy" />`
-    )
-    .join('');
+  const isSliderMode = photos.length > 2;
+  const previousIndex = Number(container.dataset.currentIndex || 0);
+  const currentIndex = Number.isFinite(previousIndex)
+    ? ((previousIndex % photos.length) + photos.length) % photos.length
+    : 0;
+
+  container.dataset.galleryMode = isSliderMode ? 'slider' : 'grid';
+  container.dataset.currentIndex = String(currentIndex);
+
+  if (!isSliderMode) {
+    container.innerHTML = photos
+      .map(
+        (photo, index) =>
+          `<button type="button" class="public-profile-photo-btn" data-gallery-open="${index}" aria-label="Отвори снимка ${index + 1}">
+            <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${index + 1}" loading="lazy" />
+          </button>`
+      )
+      .join('');
+    return;
+  }
+
+  const currentPhoto = photos[currentIndex];
+  container.innerHTML = `
+    <div class="public-profile-slider">
+      <button type="button" class="public-profile-slider__nav" data-gallery-nav="prev" aria-label="Предишна снимка">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button type="button" class="public-profile-slider__frame" data-gallery-open="${currentIndex}" aria-label="Отвори снимка ${currentIndex + 1}">
+        <img class="public-profile-photo public-profile-photo--slider" src="${escapeHtml(currentPhoto.photo_url)}" alt="Профилна снимка ${currentIndex + 1}" loading="lazy" />
+      </button>
+      <button type="button" class="public-profile-slider__nav" data-gallery-nav="next" aria-label="Следваща снимка">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <span class="public-profile-slider__counter">${currentIndex + 1} / ${photos.length}</span>
+    </div>
+  `;
+}
+
+function ensureGalleryLightbox(page) {
+  let lightbox = page.querySelector('[data-gallery-lightbox]');
+  if (lightbox) return lightbox;
+
+  lightbox = document.createElement('div');
+  lightbox.className = 'profile-gallery-lightbox';
+  lightbox.dataset.galleryLightbox = 'true';
+  lightbox.hidden = true;
+  lightbox.innerHTML = `
+    <div class="profile-gallery-lightbox__overlay" data-lightbox-action="close"></div>
+    <div class="profile-gallery-lightbox__content" role="dialog" aria-modal="true" aria-label="Галерия">
+      <button type="button" class="profile-gallery-lightbox__close" data-lightbox-action="close" aria-label="Затвори">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <button type="button" class="profile-gallery-lightbox__nav" data-lightbox-action="prev" aria-label="Предишна снимка">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <img class="profile-gallery-lightbox__image" data-lightbox-image src="" alt="Голяма снимка" loading="lazy" />
+      <button type="button" class="profile-gallery-lightbox__nav" data-lightbox-action="next" aria-label="Следваща снимка">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <p class="profile-gallery-lightbox__counter" data-lightbox-counter>1 / 1</p>
+    </div>
+  `;
+
+  page.appendChild(lightbox);
+  return lightbox;
+}
+
+function renderGalleryLightboxImage(page) {
+  const photos = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
+  const lightbox = ensureGalleryLightbox(page);
+  const imageEl = lightbox.querySelector('[data-lightbox-image]');
+  const counterEl = lightbox.querySelector('[data-lightbox-counter]');
+
+  if (!photos.length || !imageEl || !counterEl) return;
+
+  const safeIndex = ((Number(page._lightboxIndex) % photos.length) + photos.length) % photos.length;
+  page._lightboxIndex = safeIndex;
+
+  imageEl.src = photos[safeIndex].photo_url;
+  imageEl.alt = `Голяма снимка ${safeIndex + 1}`;
+  counterEl.textContent = `${safeIndex + 1} / ${photos.length}`;
+}
+
+function openGalleryLightbox(page, index) {
+  const photos = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
+  if (!photos.length) return;
+
+  const lightbox = ensureGalleryLightbox(page);
+  page._lightboxIndex = index;
+  renderGalleryLightboxImage(page);
+  lightbox.hidden = false;
+  document.body.classList.add('profile-lightbox-open');
+}
+
+function closeGalleryLightbox(page) {
+  const lightbox = page.querySelector('[data-gallery-lightbox]');
+  if (!lightbox) return;
+  lightbox.hidden = true;
+  document.body.classList.remove('profile-lightbox-open');
+}
+
+function setupGalleryInteractions(page, galleryEl, photos) {
+  if (!galleryEl) return;
+
+  page._galleryPhotos = Array.isArray(photos) ? photos : [];
+
+  if (galleryEl.dataset.galleryBound !== 'true') {
+    galleryEl.dataset.galleryBound = 'true';
+
+    galleryEl.addEventListener('click', (event) => {
+      const navBtn = event.target.closest('[data-gallery-nav]');
+      if (navBtn) {
+        const items = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
+        if (items.length < 2) return;
+        const current = Number(galleryEl.dataset.currentIndex || 0);
+        const nextIndex = navBtn.dataset.galleryNav === 'prev'
+          ? (current - 1 + items.length) % items.length
+          : (current + 1) % items.length;
+
+        galleryEl.dataset.currentIndex = String(nextIndex);
+        renderGallery(galleryEl, items);
+        return;
+      }
+
+      const openBtn = event.target.closest('[data-gallery-open]');
+      if (!openBtn) return;
+      const photoIndex = Number(openBtn.dataset.galleryOpen || 0);
+      openGalleryLightbox(page, photoIndex);
+    });
+  }
+
+  if (page.dataset.lightboxBound !== 'true') {
+    page.dataset.lightboxBound = 'true';
+
+    page.addEventListener('click', (event) => {
+      const actionEl = event.target.closest('[data-lightbox-action]');
+      if (!actionEl) return;
+
+      const action = actionEl.dataset.lightboxAction;
+      if (action === 'close') {
+        closeGalleryLightbox(page);
+        return;
+      }
+
+      const photosList = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
+      if (!photosList.length) return;
+
+      if (action === 'prev') {
+        page._lightboxIndex = ((Number(page._lightboxIndex) || 0) - 1 + photosList.length) % photosList.length;
+      } else if (action === 'next') {
+        page._lightboxIndex = ((Number(page._lightboxIndex) || 0) + 1) % photosList.length;
+      }
+
+      renderGalleryLightboxImage(page);
+    });
+  }
 }
 
 function setupActions(page, profileName, isOwnProfile, profileId) {
@@ -248,12 +400,13 @@ async function loadPublicProfile(page, userId, routerContext) {
     renderTags(lookingForEl, profile.looking_for || [], isOwnProfile, 'looking_for');
     renderTags(fetishesEl, profile.fetishes || [], isOwnProfile, 'fetishes');
     renderGallery(galleryEl, visiblePhotos);
+    setupGalleryInteractions(page, galleryEl, visiblePhotos);
     
     setupActions(page, profileName, isOwnProfile, userId);
     
     if (isOwnProfile) {
       addPhotoBtn.hidden = false;
-      photoInput.hidden = false;
+      photoInput.hidden = true;
       setupEditableFields(page, userId);
       setupPhotoUpload(addPhotoBtn, photoInput, userId, () => loadPublicProfile(page, userId, routerContext));
       setupPartnerPhotoUpload(page, partnerPhotoInput, userId, () => loadPublicProfile(page, userId, routerContext));

@@ -284,12 +284,166 @@
   gap: 0.7rem;
 }
 
+.public-profile-gallery[data-gallery-mode='slider'] {
+  display: block;
+}
+
+.public-profile-photo-btn {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+}
+
 .public-profile-photo {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.public-profile-photo--slider {
+  aspect-ratio: 16 / 10;
+}
+
+.public-profile-slider {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 13, 22, 0.9);
+}
+
+.public-profile-slider__frame {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.public-profile-slider__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(6, 11, 18, 0.72);
+  color: #f5f9ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.public-profile-slider__nav[data-gallery-nav='prev'] {
+  left: 0.7rem;
+}
+
+.public-profile-slider__nav[data-gallery-nav='next'] {
+  right: 0.7rem;
+}
+
+.public-profile-slider__counter {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.55rem;
+  font-size: 0.8rem;
+  color: #e6eefb;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(3, 8, 14, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.profile-gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.profile-gallery-lightbox__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 5, 10, 0.8);
+}
+
+.profile-gallery-lightbox__content {
+  position: relative;
+  z-index: 1;
+  width: min(960px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(9, 15, 25, 0.98);
+  display: grid;
+  place-items: center;
+}
+
+.profile-gallery-lightbox__image {
+  width: 100%;
+  max-height: calc(100vh - 4.5rem);
+  object-fit: contain;
+  background: #050a12;
+}
+
+.profile-gallery-lightbox__close,
+.profile-gallery-lightbox__nav {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(6, 11, 18, 0.72);
+  color: #f5f9ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.profile-gallery-lightbox__close {
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.profile-gallery-lightbox__nav[data-lightbox-action='prev'] {
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.profile-gallery-lightbox__nav[data-lightbox-action='next'] {
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.profile-gallery-lightbox__counter {
+  position: absolute;
+  left: 50%;
+  bottom: 0.7rem;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.86rem;
+  color: #eef4ff;
+  padding: 0.24rem 0.66rem;
+  border-radius: 999px;
+  background: rgba(3, 8, 14, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.profile-lightbox-open {
+  overflow: hidden;
 }
 
 @media (max-width: 1100px) {
@@ -328,6 +482,24 @@
 
   .public-profile-gallery {
     grid-template-columns: 1fr;
+  }
+
+  .public-profile-slider__nav {
+    width: 30px;
+    height: 30px;
+  }
+
+  .profile-gallery-lightbox {
+    padding: 0.65rem;
+  }
+
+  .profile-gallery-lightbox__content {
+    width: calc(100vw - 1rem);
+    max-height: calc(100vh - 1rem);
+  }
+
+  .profile-gallery-lightbox__image {
+    max-height: calc(100vh - 3.5rem);
   }
 
   .public-profile-fact {
