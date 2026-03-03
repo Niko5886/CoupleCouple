@@ -23,6 +23,31 @@ function formatGender(value) {
   return value;
 }
 
+function getGenderSymbol(value) {
+  const normalized = String(value || '').toLowerCase();
+  if (normalized === 'male') return '♂';
+  if (normalized === 'female') return '♀';
+  if (normalized === 'couple') return '⚥';
+  return '';
+}
+
+function formatCoupleMeta(profile) {
+  const age1 = calculateAge(profile.partner1_birth_date || profile.birth_date);
+  const age2 = calculateAge(profile.partner2_birth_date);
+
+  if (age1 && age2) {
+    const p1 = `${age1}${getGenderSymbol(profile.partner1_gender)}`;
+    const p2 = `${age2}${getGenderSymbol(profile.partner2_gender)}`;
+    return `${p1} + ${p2}`;
+  }
+
+  if (age1) {
+    return `${age1}${getGenderSymbol(profile.partner1_gender)} г.`;
+  }
+
+  return '';
+}
+
 function renderFact(label, displayValue, isEditable = false, field = '', type = 'text', rawValue = '') {
   const editableClass = isEditable ? 'editable-field' : '';
   const dataAttrs = isEditable ? `data-editable="true" data-field="${field}" data-type="${type}" data-raw-value="${escapeHtml(rawValue)}"` : '';
@@ -134,7 +159,6 @@ async function loadPublicProfile(page, userId, routerContext) {
       return;
     }
 
-    const age = calculateAge(profile.birth_date);
     const visiblePhotos = isOwnProfile 
       ? (photos || [])
       : (photos || []).filter((photo) => (photo.approval_status || 'approved') === 'approved');
@@ -143,21 +167,18 @@ async function loadPublicProfile(page, userId, routerContext) {
 
     const profileName = profile.username || 'Профил';
     const city = profile.city || '—';
+    const coupleMeta = formatCoupleMeta(profile);
 
     nameEl.textContent = profileName;
-    metaEl.textContent = `${city}${age ? `, ${age} г.` : ''}`;
+    metaEl.textContent = `${city}${coupleMeta ? ` • ${coupleMeta}` : ''}`;
     statusEl.textContent = profile.is_online ? 'Онлайн' : 'Профилът е зареден';
 
     if (primaryPhoto?.photo_url || profile.avatar_url) {
       const avatarUrl = primaryPhoto?.photo_url || profile.avatar_url;
       avatarEl.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(profileName)}" />`;
-      coverEl.style.backgroundImage = `url('${avatarUrl.replace(/'/g, "\\'")}')`;
-      coverEl.classList.add('has-image');
     } else {
       avatarEl.innerHTML = '';
       avatarEl.textContent = profileName.charAt(0).toUpperCase();
-      coverEl.style.backgroundImage = '';
-      coverEl.classList.remove('has-image');
     }
 
     // Calculate ages for both partners

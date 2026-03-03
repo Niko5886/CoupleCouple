@@ -6,3 +6,7 @@
 .admin-scroll-500 { max-height: 500px; overflow-y: auto; }
 .admin-scroll-400 { max-height: 400px; overflow-y: auto; }
 .admin-search-group { max-width: 300px; }
+.admin-user-meta {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}

@@ -37,7 +37,7 @@ function createUserCard(user, navigateToProfile) {
   card.setAttribute('aria-label', `Отвори профила на ${user.username || 'потребител'}`);
   
   // Calculate ages for both partners
-  const age1 = calculateAge(user.partner1_birth_date);
+  const age1 = calculateAge(user.partner1_birth_date || user.birth_date);
   const age2 = calculateAge(user.partner2_birth_date);
   
   let ageGenderStr = '';
@@ -46,7 +46,7 @@ function createUserCard(user, navigateToProfile) {
     const gender2 = getGenderSymbol(user.partner2_gender);
     ageGenderStr = `${age1}${gender1} + ${age2}${gender2}`;
   } else if (age1) {
-    const gender1 = getGenderSymbol(user.partner1_gender);
+    const gender1 = getGenderSymbol(user.partner1_gender || user.gender);
     ageGenderStr = `${age1}${gender1}`;
   }
   

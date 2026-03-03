@@ -19,6 +19,40 @@ import {
 
 const selectedPhotos = new Set();
 
+function calculateAge(birthDate) {
+  if (!birthDate) return null;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function getGenderSymbol(gender) {
+  if (gender === 'male') return '♂';
+  if (gender === 'female') return '♀';
+  if (gender === 'couple') return '⚥';
+  return '';
+}
+
+function formatCoupleMeta(user) {
+  const age1 = calculateAge(user.partner1_birth_date || user.birth_date);
+  const age2 = calculateAge(user.partner2_birth_date);
+
+  if (age1 && age2) {
+    return `${age1}${getGenderSymbol(user.partner1_gender || user.gender)} + ${age2}${getGenderSymbol(user.partner2_gender)}`;
+  }
+
+  if (age1) {
+    return `${age1}${getGenderSymbol(user.partner1_gender || user.gender)}`;
+  }
+
+  return '';
+}
+
 function renderStats(container, stats) {
   container.innerHTML = `
     <div class="row g-4 mb-4">
@@ -91,6 +125,7 @@ function renderUsers(container, users) {
     .map((user) => {
       let badgeClass = user.approval_status === 'in_review' ? 'bg-info' : 'bg-warning text-dark';
       let icon = user.approval_status === 'in_review' ? 'bi-search' : 'bi-hourglass';
+      const coupleMeta = formatCoupleMeta(user);
       
       const avatarImg = user.avatar_url ? user.avatar_url : 'https://placehold.co/100x100/182436/8eb7f1?text=U';
 
@@ -103,7 +138,7 @@ function renderUsers(container, users) {
                   <h6 class="mb-0 text-white">${user.username || 'Без име'}</h6>
                   <span class="badge ${badgeClass} text-uppercase"><i class="bi ${icon} me-1"></i>${user.approval_status}</span>
                 </div>
-                <p class="mb-1 text-muted small"><i class="bi bi-geo-alt me-1"></i>${user.city || 'Неизвестен град'} ${user.birth_date ? ` • ${new Date(user.birth_date).getFullYear()} г.` : ''}</p>
+                <p class="mb-1 text-muted small admin-user-meta"><i class="bi bi-geo-alt me-1"></i>${user.city || 'Неизвестен град'}${coupleMeta ? ` • ${coupleMeta}` : ''}</p>
                 <p class="mb-2 text-white-50" style="font-size: 0.75rem;"><i class="bi bi-person-add me-1"></i>${user.created_at ? new Date(user.created_at).toLocaleString('bg-BG') : '—'}</p>
                 
                 ${user.rejection_reason ? `<div class="alert alert-danger p-2 mb-2 small border-danger bg-opacity-10 text-danger"><i class="bi bi-exclamation-triangle me-1"></i>${user.rejection_reason}</div>` : ''}
@@ -141,6 +176,7 @@ function renderUsers(container, users) {
 
         const avatarImg = user.avatar_url ? user.avatar_url : 'https://placehold.co/100x100/182436/8eb7f1?text=U';
         const formattedDate = user.created_at ? new Date(user.created_at).toLocaleDateString('bg-BG', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+        const coupleMeta = formatCoupleMeta(user);
         
         return `
           <tr data-user-id="${user.id}">
@@ -154,7 +190,7 @@ function renderUsers(container, users) {
               </div>
             </td>
             <td>
-              <p class="mb-0 text-white-50"><i class="bi bi-geo-alt me-1"></i>${user.city || '—'}</p>
+              <p class="mb-0 text-white-50 admin-user-meta"><i class="bi bi-geo-alt me-1"></i>${user.city || '—'}${coupleMeta ? ` • ${coupleMeta}` : ''}</p>
               <p class="mb-0 text-muted small"><i class="bi bi-calendar3 me-1"></i>${formattedDate}</p>
             </td>
             <td class="text-center">
