@@ -2,6 +2,7 @@
 import profileTemplate from './profile.html?raw';
 import toast from '../../components/toast/toast.js';
 import { fetchProfileWithPhotos, calculateAge, formatLastSeen, updateProfile, uploadProfilePhoto } from '../../services/profileService.js';
+import { fetchMessagesWith, sendMessage, markAsRead, subscribeToMessages } from '../../services/messageService.js';
 import { getAuthUser } from '../../services/authState.js';
 import { router } from '../../router/router.js';
 
@@ -323,7 +324,181 @@ function setupGalleryInteractions(page, galleryEl, photos) {
   }
 }
 
-function setupActions(page, profileName, isOwnProfile, profileId) {
+function formatChatMessageTime(isoString) {
+  return new Date(isoString).toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+}
+
+function renderProfileChatMessages(flowEl, messages, currentUserId) {
+  if (!Array.isArray(messages) || !messages.length) {
+    flowEl.innerHTML = '<p class="profile-chat-modal__empty">Няма съобщения. Започнете разговора.</p>';
+    return;
+  }
+
+  flowEl.innerHTML = messages
+    .map((msg) => {
+      const isMine = msg.sender_id === currentUserId;
+      return `
+        <div class="profile-chat-modal__row ${isMine ? 'is-mine' : 'is-theirs'}">
+          <div class="profile-chat-modal__bubble">
+            <p>${escapeHtml(msg.content || '')}</p>
+            <span>${formatChatMessageTime(msg.created_at)}</span>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+
+  flowEl.scrollTop = flowEl.scrollHeight;
+}
+
+function appendProfileChatMessage(flowEl, msg, currentUserId) {
+  const empty = flowEl.querySelector('.profile-chat-modal__empty');
+  if (empty) flowEl.innerHTML = '';
+
+  const isMine = msg.sender_id === currentUserId;
+  flowEl.insertAdjacentHTML(
+    'beforeend',
+    `
+      <div class="profile-chat-modal__row ${isMine ? 'is-mine' : 'is-theirs'}">
+        <div class="profile-chat-modal__bubble">
+          <p>${escapeHtml(msg.content || '')}</p>
+          <span>${formatChatMessageTime(msg.created_at)}</span>
+        </div>
+      </div>
+    `
+  );
+
+  flowEl.scrollTop = flowEl.scrollHeight;
+}
+
+function ensureProfileMessageModal(page) {
+  let modal = page.querySelector('[data-profile-chat-modal]');
+  if (modal) return modal;
+
+  modal = document.createElement('div');
+  modal.className = 'profile-chat-modal';
+  modal.dataset.profileChatModal = 'true';
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="profile-chat-modal__overlay" data-profile-chat-close></div>
+    <div class="profile-chat-modal__panel" role="dialog" aria-modal="true" aria-label="Съобщения">
+      <header class="profile-chat-modal__header">
+        <div>
+          <h3 data-profile-chat-title>Съобщение</h3>
+          <p data-profile-chat-status></p>
+        </div>
+        <button type="button" class="profile-chat-modal__close" data-profile-chat-close aria-label="Затвори">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+      <div class="profile-chat-modal__flow" data-profile-chat-flow>
+        <p class="profile-chat-modal__empty">Зареждане...</p>
+      </div>
+      <form class="profile-chat-modal__form" data-profile-chat-form>
+        <textarea data-profile-chat-input rows="1" placeholder="Напиши съобщение..."></textarea>
+        <button type="submit" aria-label="Изпрати">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </form>
+    </div>
+  `;
+
+  page.appendChild(modal);
+  return modal;
+}
+
+function closeProfileMessageModal(page) {
+  const modal = page.querySelector('[data-profile-chat-modal]');
+  if (!modal) return;
+
+  modal.hidden = true;
+  document.body.classList.remove('profile-chat-open');
+
+  if (page._profileChatSub && typeof page._profileChatSub.unsubscribe === 'function') {
+    page._profileChatSub.unsubscribe();
+  }
+  page._profileChatSub = null;
+}
+
+async function openProfileMessageModal(page, profileId, profileName, profileStatus) {
+  const currentUser = getAuthUser();
+  if (!currentUser) {
+    router.navigate('/login');
+    return;
+  }
+
+  const modal = ensureProfileMessageModal(page);
+  const titleEl = modal.querySelector('[data-profile-chat-title]');
+  const statusEl = modal.querySelector('[data-profile-chat-status]');
+  const flowEl = modal.querySelector('[data-profile-chat-flow]');
+  const formEl = modal.querySelector('[data-profile-chat-form]');
+  const inputEl = modal.querySelector('[data-profile-chat-input]');
+
+  page._profileChatTargetId = profileId;
+  titleEl.textContent = `Съобщение до ${profileName}`;
+  statusEl.textContent = profileStatus || '';
+  flowEl.innerHTML = '<p class="profile-chat-modal__empty">Зареждане...</p>';
+  modal.hidden = false;
+  document.body.classList.add('profile-chat-open');
+
+  if (page._profileChatSub && typeof page._profileChatSub.unsubscribe === 'function') {
+    page._profileChatSub.unsubscribe();
+  }
+
+  try {
+    const messages = await fetchMessagesWith(profileId);
+    renderProfileChatMessages(flowEl, messages, currentUser.id);
+    await markAsRead(profileId);
+  } catch (error) {
+    console.error(error);
+    flowEl.innerHTML = '<p class="profile-chat-modal__empty">Грешка при зареждане на съобщения.</p>';
+  }
+
+  page._profileChatSub = subscribeToMessages((newMsg) => {
+    const chatTargetId = page._profileChatTargetId;
+    if (!chatTargetId) return;
+
+    const mineToTarget = newMsg.sender_id === currentUser.id && newMsg.receiver_id === chatTargetId;
+    const targetToMine = newMsg.sender_id === chatTargetId && newMsg.receiver_id === currentUser.id;
+    if (!mineToTarget && !targetToMine) return;
+
+    appendProfileChatMessage(flowEl, newMsg, currentUser.id);
+    if (targetToMine) {
+      markAsRead(chatTargetId);
+    }
+  });
+
+  if (!modal.dataset.bound) {
+    modal.dataset.bound = 'true';
+
+    modal.addEventListener('click', (event) => {
+      if (event.target.closest('[data-profile-chat-close]')) {
+        closeProfileMessageModal(page);
+      }
+    });
+
+    formEl.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const targetId = page._profileChatTargetId;
+      const content = inputEl.value.trim();
+      if (!targetId || !content) return;
+
+      inputEl.value = '';
+
+      try {
+        await sendMessage(targetId, content);
+      } catch (error) {
+        console.error(error);
+        toast.error('Неуспешно изпращане на съобщение.');
+        inputEl.value = content;
+      }
+    });
+  }
+
+  setTimeout(() => inputEl.focus(), 20);
+}
+
+function setupActions(page, profileName, profileStatus, isOwnProfile, profileId) {
   const actionsSection = page.querySelector('[data-actions-section]');
   if (actionsSection) {
     if (isOwnProfile) {
@@ -339,7 +514,7 @@ function setupActions(page, profileName, isOwnProfile, profileId) {
       if (!action) return;
 
       if (action === 'message') {
-        router.navigate(`/messages?userId=${profileId}`);
+        openProfileMessageModal(page, profileId, profileName, profileStatus);
     } else if (action === 'friend') {
       toast.info('Добавянето в приятели ще се свърже в следваща стъпка.', { title: `Приятелство с ${profileName}` });
     } else if (action === 'like') {
@@ -427,7 +602,8 @@ async function loadPublicProfile(page, userId, routerContext) {
     renderGallery(galleryEl, visiblePhotos);
     setupGalleryInteractions(page, galleryEl, visiblePhotos);
     
-    setupActions(page, profileName, isOwnProfile, userId);
+    const profileStatus = profile.is_online ? 'Онлайн' : formatLastSeen(profile.last_seen_at);
+    setupActions(page, profileName, profileStatus, isOwnProfile, userId);
     
     if (isOwnProfile) {
       addPhotoBtn.hidden = false;
