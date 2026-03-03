@@ -305,7 +305,7 @@
 }
 
 .public-profile-photo--slider {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1 / 1;
 }
 
 .public-profile-slider {
@@ -314,50 +314,57 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(8, 13, 22, 0.9);
+  display: flex;
+  align-items: stretch;
+  gap: 0;
 }
 
 .public-profile-slider__frame {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  padding: 0.7rem;
+  min-width: 0;
+}
+
+.public-profile-slider__frame .public-profile-photo-btn {
   width: 100%;
+  padding: 0;
   border: 0;
   background: transparent;
-  padding: 0;
-  cursor: pointer;
+}
+
+.public-profile-slider__frame .public-profile-photo {
+  aspect-ratio: 1 / 1;
 }
 
 .public-profile-slider__nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  background: rgba(6, 11, 18, 0.72);
+  position: relative;
+  width: 40px;
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(6, 11, 18, 0.5);
   color: #f5f9ff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.public-profile-slider__nav:hover {
+  background: rgba(6, 11, 18, 0.8);
 }
 
 .public-profile-slider__nav[data-gallery-nav='prev'] {
-  left: 0.7rem;
-}
-
-.public-profile-slider__nav[data-gallery-nav='next'] {
-  right: 0.7rem;
-}
-
-.public-profile-slider__counter {
-  position: absolute;
-  right: 0.65rem;
-  bottom: 0.55rem;
-  font-size: 0.8rem;
-  color: #e6eefb;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background: rgba(3, 8, 14, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+  order: -1;
 }
 
 .profile-gallery-lightbox {
@@ -458,6 +465,15 @@ body.profile-lightbox-open {
   .public-profile-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .public-profile-slider__frame {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-profile-slider__nav {
+    width: 36px;
+  }
+
 }
 
 @media (max-width: 680px) {
@@ -481,6 +497,10 @@ body.profile-lightbox-open {
   }
 
   .public-profile-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .public-profile-slider__frame {
     grid-template-columns: 1fr;
   }
 

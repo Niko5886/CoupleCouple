@@ -140,14 +140,24 @@ function renderGallery(container, photos) {
     return;
   }
 
-  const isSliderMode = photos.length > 2;
+  // Dynamically determine photos per slide based on screen width
+  let PHOTOS_PER_SLIDE = 3;
+  if (window.innerWidth < 680) {
+    PHOTOS_PER_SLIDE = 1;
+  } else if (window.innerWidth < 1100) {
+    PHOTOS_PER_SLIDE = 2;
+  }
+
+  const isSliderMode = photos.length > PHOTOS_PER_SLIDE;
   const previousIndex = Number(container.dataset.currentIndex || 0);
+  const maxOffset = Math.max(0, photos.length - PHOTOS_PER_SLIDE);
   const currentIndex = Number.isFinite(previousIndex)
-    ? ((previousIndex % photos.length) + photos.length) % photos.length
+    ? ((previousIndex % (maxOffset + 1)) + (maxOffset + 1)) % (maxOffset + 1)
     : 0;
 
   container.dataset.galleryMode = isSliderMode ? 'slider' : 'grid';
   container.dataset.currentIndex = String(currentIndex);
+  container.dataset.photosPerSlide = String(PHOTOS_PER_SLIDE);
 
   if (!isSliderMode) {
     container.innerHTML = photos
@@ -161,19 +171,27 @@ function renderGallery(container, photos) {
     return;
   }
 
-  const currentPhoto = photos[currentIndex];
+  const visiblePhotos = photos.slice(currentIndex, currentIndex + PHOTOS_PER_SLIDE);
+  const photosHtml = visiblePhotos
+    .map((photo, i) => {
+      const actualIndex = currentIndex + i;
+      return `<button type="button" class="public-profile-photo-btn" data-gallery-open="${actualIndex}" aria-label="Отвори снимка ${actualIndex + 1}">
+        <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${actualIndex + 1}" loading="lazy" />
+      </button>`;
+    })
+    .join('');
+
   container.innerHTML = `
     <div class="public-profile-slider">
-      <button type="button" class="public-profile-slider__nav" data-gallery-nav="prev" aria-label="Предишна снимка">
+      <button type="button" class="public-profile-slider__nav" data-gallery-nav="prev" aria-label="Предишни снимки">
         <i class="bi bi-chevron-left"></i>
       </button>
-      <button type="button" class="public-profile-slider__frame" data-gallery-open="${currentIndex}" aria-label="Отвори снимка ${currentIndex + 1}">
-        <img class="public-profile-photo public-profile-photo--slider" src="${escapeHtml(currentPhoto.photo_url)}" alt="Профилна снимка ${currentIndex + 1}" loading="lazy" />
-      </button>
-      <button type="button" class="public-profile-slider__nav" data-gallery-nav="next" aria-label="Следваща снимка">
+      <div class="public-profile-slider__frame">
+        ${photosHtml}
+      </div>
+      <button type="button" class="public-profile-slider__nav" data-gallery-nav="next" aria-label="Следващи снимки">
         <i class="bi bi-chevron-right"></i>
       </button>
-      <span class="public-profile-slider__counter">${currentIndex + 1} / ${photos.length}</span>
     </div>
   `;
 }
@@ -253,11 +271,16 @@ function setupGalleryInteractions(page, galleryEl, photos) {
       const navBtn = event.target.closest('[data-gallery-nav]');
       if (navBtn) {
         const items = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
-        if (items.length < 2) return;
+        const PHOTOS_PER_SLIDE = Number(galleryEl.dataset.photosPerSlide || 3);
+        
+        // Only allow navigation if slider mode
+        if (items.length <= PHOTOS_PER_SLIDE) return;
+        
         const current = Number(galleryEl.dataset.currentIndex || 0);
+        const maxOffset = items.length - PHOTOS_PER_SLIDE;
         const nextIndex = navBtn.dataset.galleryNav === 'prev'
-          ? (current - 1 + items.length) % items.length
-          : (current + 1) % items.length;
+          ? (current - 1 + maxOffset + 1) % (maxOffset + 1)
+          : (current + 1) % (maxOffset + 1);
 
         galleryEl.dataset.currentIndex = String(nextIndex);
         renderGallery(galleryEl, items);
