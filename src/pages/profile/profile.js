@@ -132,6 +132,15 @@ function renderTags(container, items, isEditable = false, tagField = '') {
     .join('');
 }
 
+function createPhotoButton(photo, index) {
+  const isPending = photo.approval_status === 'pending';
+  const pendingBadge = isPending ? `<span class="photo-pending-badge">изчаква одобрение</span>` : '';
+  return `<button type="button" class="public-profile-photo-btn" data-gallery-open="${index}" aria-label="Отвори снимка ${index + 1}">
+    <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${index + 1}" loading="lazy" />
+    ${pendingBadge}
+  </button>`;
+}
+
 function renderGallery(container, photos) {
   if (!Array.isArray(photos) || photos.length === 0) {
     container.dataset.galleryMode = 'empty';
@@ -161,12 +170,7 @@ function renderGallery(container, photos) {
 
   if (!isSliderMode) {
     container.innerHTML = photos
-      .map(
-        (photo, index) =>
-          `<button type="button" class="public-profile-photo-btn" data-gallery-open="${index}" aria-label="Отвори снимка ${index + 1}">
-            <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${index + 1}" loading="lazy" />
-          </button>`
-      )
+      .map((photo, index) => createPhotoButton(photo, index))
       .join('');
     return;
   }
@@ -175,9 +179,7 @@ function renderGallery(container, photos) {
   const photosHtml = visiblePhotos
     .map((photo, i) => {
       const actualIndex = currentIndex + i;
-      return `<button type="button" class="public-profile-photo-btn" data-gallery-open="${actualIndex}" aria-label="Отвори снимка ${actualIndex + 1}">
-        <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${actualIndex + 1}" loading="lazy" />
-      </button>`;
+      return createPhotoButton(photo, actualIndex);
     })
     .join('');
 
@@ -385,7 +387,7 @@ async function loadPublicProfile(page, userId, routerContext) {
     }
 
     const visiblePhotos = isOwnProfile 
-      ? (photos || [])
+      ? (photos || []).filter((photo) => photo.approval_status !== 'rejected')
       : (photos || []).filter((photo) => (photo.approval_status || 'approved') === 'approved');
       
     const primaryPhoto = visiblePhotos.find((photo) => photo.is_primary) || visiblePhotos[0] || null;
@@ -458,18 +460,16 @@ function setupPhotoUpload(addBtn, fileInput, userId, onUploadSuccess) {
     if (!file) return;
 
     try {
-      newBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
       newBtn.disabled = true;
       toast.info('Качване на снимката...', { duration: 2000 });
       
       await uploadProfilePhoto(userId, file);
-      toast.success('Снимката е качена успешно!');
+      toast.success('Снимката е качена и изчаква одобрение от админ.');
       
       onUploadSuccess();
     } catch (err) {
       console.error(err);
       toast.error(err.message || 'Неуспшно качване на снимка.');
-      newBtn.innerHTML = '<i class="bi bi-plus-lg"></i>';
       newBtn.disabled = false;
     } finally {
       newInput.value = '';
@@ -498,7 +498,7 @@ function setupPartnerPhotoUpload(page, input, userId, onUploadSuccess) {
       toast.info('Качване на снимката...', { duration: 1800 });
       const uploaded = await uploadProfilePhoto(userId, file);
       await updateProfile(userId, { [`partner${partnerIndex}_photo_url`]: uploaded.photo_url });
-      toast.success('Снимката е качена успешно!');
+      toast.success('Снимката е качена и изчаква одобрение от админ.');
       onUploadSuccess();
     } catch (error) {
       console.error(error);
