@@ -297,6 +297,23 @@
   position: relative;
 }
 
+.public-profile-photo-tile {
+  position: relative;
+}
+
+.public-profile-photo-delete {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 3;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .photo-pending-badge {
   position: absolute;
   top: 0;

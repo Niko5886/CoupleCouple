@@ -1,7 +1,7 @@
 ﻿import './profile.css';
 import profileTemplate from './profile.html?raw';
 import toast from '../../components/toast/toast.js';
-import { fetchProfileWithPhotos, calculateAge, formatLastSeen, updateProfile, uploadProfilePhoto } from '../../services/profileService.js';
+import { fetchProfileWithPhotos, calculateAge, formatLastSeen, updateProfile, uploadProfilePhoto, deletePhoto } from '../../services/profileService.js';
 import { fetchMessagesWith, sendMessage, markAsRead, subscribeToMessages } from '../../services/messageService.js';
 import { getAuthUser } from '../../services/authState.js';
 import { router } from '../../router/router.js';
@@ -133,16 +133,25 @@ function renderTags(container, items, isEditable = false, tagField = '') {
     .join('');
 }
 
-function createPhotoButton(photo, index) {
+function createPhotoButton(photo, index, isOwnProfile = false) {
   const isPending = photo.approval_status === 'pending';
   const pendingBadge = isPending ? `<span class="photo-pending-badge">изчаква одобрение</span>` : '';
-  return `<button type="button" class="public-profile-photo-btn" data-gallery-open="${index}" aria-label="Отвори снимка ${index + 1}">
-    <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${index + 1}" loading="lazy" />
-    ${pendingBadge}
-  </button>`;
+  const deleteBtn = isOwnProfile
+    ? `<button type="button" class="public-profile-photo-delete btn btn-danger btn-sm" data-gallery-delete="${escapeHtml(photo.id)}" aria-label="Изтрий снимка ${index + 1}">
+        <i class="bi bi-trash"></i>
+      </button>`
+    : '';
+
+  return `<div class="public-profile-photo-tile">
+    <button type="button" class="public-profile-photo-btn" data-gallery-open="${index}" aria-label="Отвори снимка ${index + 1}">
+      <img class="public-profile-photo" src="${escapeHtml(photo.photo_url)}" alt="Профилна снимка ${index + 1}" loading="lazy" />
+      ${pendingBadge}
+    </button>
+    ${deleteBtn}
+  </div>`;
 }
 
-function renderGallery(container, photos) {
+function renderGallery(container, photos, { isOwnProfile = false } = {}) {
   if (!Array.isArray(photos) || photos.length === 0) {
     container.dataset.galleryMode = 'empty';
     container.dataset.currentIndex = '0';
@@ -171,7 +180,7 @@ function renderGallery(container, photos) {
 
   if (!isSliderMode) {
     container.innerHTML = photos
-      .map((photo, index) => createPhotoButton(photo, index))
+      .map((photo, index) => createPhotoButton(photo, index, isOwnProfile))
       .join('');
     return;
   }
@@ -180,7 +189,7 @@ function renderGallery(container, photos) {
   const photosHtml = visiblePhotos
     .map((photo, i) => {
       const actualIndex = currentIndex + i;
-      return createPhotoButton(photo, actualIndex);
+      return createPhotoButton(photo, actualIndex, isOwnProfile);
     })
     .join('');
 
@@ -262,15 +271,30 @@ function closeGalleryLightbox(page) {
   document.body.classList.remove('profile-lightbox-open');
 }
 
-function setupGalleryInteractions(page, galleryEl, photos) {
+function setupGalleryInteractions(page, galleryEl, photos, { isOwnProfile = false, onDelete = null } = {}) {
   if (!galleryEl) return;
 
   page._galleryPhotos = Array.isArray(photos) ? photos : [];
+  page._galleryIsOwnProfile = isOwnProfile;
+  page._galleryOnDelete = onDelete;
 
   if (galleryEl.dataset.galleryBound !== 'true') {
     galleryEl.dataset.galleryBound = 'true';
 
-    galleryEl.addEventListener('click', (event) => {
+    galleryEl.addEventListener('click', async (event) => {
+      const deleteBtn = event.target.closest('[data-gallery-delete]');
+      if (deleteBtn) {
+        if (!page._galleryIsOwnProfile || typeof page._galleryOnDelete !== 'function') return;
+
+        const photoId = deleteBtn.dataset.galleryDelete;
+        const photosList = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
+        const targetPhoto = photosList.find((photo) => String(photo.id) === String(photoId));
+        if (!targetPhoto) return;
+
+        await page._galleryOnDelete(targetPhoto);
+        return;
+      }
+
       const navBtn = event.target.closest('[data-gallery-nav]');
       if (navBtn) {
         const items = Array.isArray(page._galleryPhotos) ? page._galleryPhotos : [];
@@ -286,7 +310,7 @@ function setupGalleryInteractions(page, galleryEl, photos) {
           : (current + 1) % (maxOffset + 1);
 
         galleryEl.dataset.currentIndex = String(nextIndex);
-        renderGallery(galleryEl, items);
+        renderGallery(galleryEl, items, { isOwnProfile: page._galleryIsOwnProfile });
         return;
       }
 
@@ -599,8 +623,23 @@ async function loadPublicProfile(page, userId, routerContext) {
 
     renderTags(lookingForEl, profile.looking_for || [], isOwnProfile, 'looking_for');
     renderTags(fetishesEl, profile.fetishes || [], isOwnProfile, 'fetishes');
-    renderGallery(galleryEl, visiblePhotos);
-    setupGalleryInteractions(page, galleryEl, visiblePhotos);
+    renderGallery(galleryEl, visiblePhotos, { isOwnProfile });
+    setupGalleryInteractions(page, galleryEl, visiblePhotos, {
+      isOwnProfile,
+      onDelete: async (photo) => {
+        const confirmDelete = window.confirm('Сигурни ли сте, че искате да изтриете тази снимка?');
+        if (!confirmDelete) return;
+
+        try {
+          await deletePhoto(userId, photo.id);
+          toast.success('Снимката е изтрита успешно.');
+          await loadPublicProfile(page, userId, routerContext);
+        } catch (error) {
+          console.error(error);
+          toast.error(error.message || 'Неуспешно изтриване на снимка.');
+        }
+      }
+    });
     
     const profileStatus = profile.is_online ? 'Онлайн' : formatLastSeen(profile.last_seen_at);
     setupActions(page, profileName, profileStatus, isOwnProfile, userId);
