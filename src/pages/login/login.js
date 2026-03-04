@@ -59,6 +59,7 @@ function bindTestCredentials(container) {
   const credsList = container.querySelector('[data-creds-list]');
   const adminBtn = container.querySelector('[data-use-admin]');
   const userBtn = container.querySelector('[data-use-user]');
+  const sofiBtn = container.querySelector('[data-use-sofi]');
   const emailInput = container.querySelector('[name="email"]');
   const passwordInput = container.querySelector('[name="password"]');
 
@@ -85,6 +86,14 @@ function bindTestCredentials(container) {
     e.preventDefault();
     emailInput.value = 'maria@gmail.com';
     passwordInput.value = 'Password123!';
+    emailInput.focus();
+  });
+
+  // Use sofi credentials
+  sofiBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    emailInput.value = 'sofi@gmail.com';
+    passwordInput.value = 'pas123';
     emailInput.focus();
   });
 }

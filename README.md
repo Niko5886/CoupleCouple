@@ -14,9 +14,13 @@ For testing purposes, use these credentials:
 - Email: `nik@gmail.com`
 - Password: `Password123!`
 
-**Regular User Account:**
+**Regular User Account (Maria):**
 - Email: `maria@gmail.com`
 - Password: `Password123!`
+
+**Regular User Account (Sofi):**
+- Email: `sofi@gmail.com`
+- Password: `pas123`
 
 > **Note:** These are demo accounts. Please do not change the passwords as they are shared for evaluation purposes.
 
