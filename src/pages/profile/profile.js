@@ -1,6 +1,7 @@
 ﻿import './profile.css';
 import profileTemplate from './profile.html?raw';
 import toast from '../../components/toast/toast.js';
+import { showConfirm } from '../../components/dialog/dialog.js';
 import { fetchProfileWithPhotos, calculateAge, formatLastSeen, updateProfile, uploadProfilePhoto, deletePhoto } from '../../services/profileService.js';
 import { fetchMessagesWith, sendMessage, markAsRead, subscribeToMessages } from '../../services/messageService.js';
 import { getAuthUser } from '../../services/authState.js';
@@ -627,7 +628,13 @@ async function loadPublicProfile(page, userId, routerContext) {
     setupGalleryInteractions(page, galleryEl, visiblePhotos, {
       isOwnProfile,
       onDelete: async (photo) => {
-        const confirmDelete = window.confirm('Сигурни ли сте, че искате да изтриете тази снимка?');
+        const confirmDelete = await showConfirm({
+          title: 'Изтриване на снимка',
+          message: 'Сигурни ли сте, че искате да изтриете тази снимка?',
+          confirmText: 'Изтрий',
+          cancelText: 'Отказ',
+          confirmClass: 'btn-danger'
+        });
         if (!confirmDelete) return;
 
         try {
@@ -684,7 +691,7 @@ function setupPhotoUpload(addBtn, fileInput, userId, onUploadSuccess) {
       onUploadSuccess();
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Неуспшно качване на снимка.');
+      toast.error(err.message || 'Неуспешно качване на снимка.');
       newBtn.disabled = false;
     } finally {
       newInput.value = '';

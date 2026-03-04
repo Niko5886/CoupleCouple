@@ -1,6 +1,7 @@
 import './profileModal.css';
 import { getAuthUser, userHasRole } from '../../services/authState.js';
 import toast from '../toast/toast.js';
+import { showConfirm } from '../dialog/dialog.js';
 import {
   fetchProfileWithPhotos,
   uploadProfilePhoto,
@@ -236,7 +237,14 @@ async function handleActions(modalEl, userId) {
       }
       if (action === 'delete-photo') {
         const photoId = e.target.dataset.photoId;
-        if (!confirm('Сигурен ли си, че искаш да изтриеш тази снимка?')) return;
+        const confirmed = await showConfirm({
+          title: 'Изтриване на снимка',
+          message: 'Сигурни ли сте, че искате да изтриете тази снимка?',
+          confirmText: 'Изтрий',
+          cancelText: 'Отказ',
+          confirmClass: 'btn-danger'
+        });
+        if (!confirmed) return;
         await deletePhoto(userId, photoId);
         toast.warning('Снимката беше изтрита.', { title: 'Снимка изтрита' });
         await loadProfile(modalEl, userId, isOwner, editMode);

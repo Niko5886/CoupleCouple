@@ -1,24 +1,27 @@
 .toast-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
+  top: 16px;
+  right: 16px;
+  z-index: 1400;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   pointer-events: none;
 }
 
 .toast {
   min-width: 300px;
-  max-width: 400px;
-  padding: 16px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 420px;
+  padding: 14px 16px;
+  background: linear-gradient(150deg, rgba(15, 24, 38, 0.96), rgba(8, 14, 24, 0.96));
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   pointer-events: auto;
   animation: slideIn 0.3s ease-out;
   position: relative;
@@ -26,7 +29,7 @@
 }
 
 .toast.toast--success {
-  border-left: 4px solid #10b981;
+  border-left: 4px solid #22c55e;
 }
 
 .toast.toast--error {
@@ -38,14 +41,16 @@
 }
 
 .toast.toast--info {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #60a5fa;
 }
 
 .toast__icon {
-  font-size: 24px;
+  font-size: 20px;
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,14 +81,14 @@
 
 .toast__title {
   font-weight: 600;
-  font-size: 14px;
-  color: #1f2937;
+  font-size: 13px;
+  color: #ecf4ff;
   margin: 0;
 }
 
 .toast__message {
   font-size: 13px;
-  color: #6b7280;
+  color: #b7c7df;
   margin: 0;
   line-height: 1.4;
 }
@@ -92,20 +97,23 @@
   background: none;
   border: none;
   padding: 0;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
-  color: #9ca3af;
-  font-size: 18px;
+  color: #9fb2cf;
+  font-size: 19px;
   line-height: 1;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .toast__close:hover {
-  color: #4b5563;
+  color: #eef5ff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .toast__progress {
@@ -131,7 +139,7 @@
 }
 
 .toast--info .toast__progress {
-  color: #3b82f6;
+  color: #60a5fa;
 }
 
 @keyframes slideIn {

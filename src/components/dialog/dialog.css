@@ -1,0 +1,65 @@
+.app-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.app-dialog__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 11, 0.82);
+}
+
+.app-dialog__panel {
+  position: relative;
+  z-index: 1;
+  width: min(500px, calc(100vw - 2rem));
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(150deg, rgba(14, 22, 35, 0.97), rgba(8, 13, 22, 0.97));
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.48);
+  padding: 1rem 1rem 0.9rem;
+}
+
+.app-dialog__title {
+  margin: 0;
+  color: #f3f8ff;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.app-dialog__message {
+  margin: 0.45rem 0 0;
+  color: #b9cbe7;
+  line-height: 1.45;
+}
+
+.app-dialog__input {
+  width: 100%;
+  margin-top: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(6, 11, 18, 0.7);
+  color: #eff5ff;
+  padding: 0.55rem 0.7rem;
+  outline: none;
+}
+
+.app-dialog__input::placeholder {
+  color: #94a9c8;
+}
+
+.app-dialog__input:focus {
+  border-color: rgba(136, 183, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(70, 130, 220, 0.22);
+}
+
+.app-dialog__actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}

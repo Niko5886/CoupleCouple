@@ -3,6 +3,7 @@ import adminTemplate from './admin.html?raw';
 import { getAuthUser, userHasRole } from '../../services/authState.js';
 import { router } from '../../router/router.js';
 import toast from '../../components/toast/toast.js';
+import { showConfirm, showPrompt } from '../../components/dialog/dialog.js';
 import {
   fetchAdminStats,
   fetchPendingProfiles,
@@ -416,12 +417,31 @@ function attachUserActions(container) {
         toast.success('Профилът е одобрен успешно!', { title: 'Одобрен профил' });
       }
       if (action === 'user-reject') {
-        const reason = prompt('Причина за отхвърляне:') || '';
+        const reason = await showPrompt({
+          title: 'Отхвърляне на профил',
+          message: 'Добавете причина за отхвърляне (по желание):',
+          confirmText: 'Отхвърли',
+          cancelText: 'Отказ',
+          confirmClass: 'btn-warning',
+          placeholder: 'Причина...'
+        });
+        if (reason === null) {
+          toast.info('Действието е отменено.', { title: 'Отменено' });
+          return;
+        }
         await updateProfileStatus(userId, 'rejected', reason);
         toast.warning('Профилът е отхвърлен.', { title: 'Отхвърлен профил' });
       }
       if (action === 'user-delete-full') {
-        if (!confirm('СИГУРНИ ЛИ СТЕ? Това ще изтрие потребителя и всички негови данни (снимки, задачи, профил). Това действие е необратимо!')) {
+        const confirmed = await showConfirm({
+          title: 'Пълно изтриване на потребител',
+          message: 'Това ще изтрие потребителя и всички негови данни (снимки, задачи, профил). Действието е необратимо.',
+          confirmText: 'Изтрий завинаги',
+          cancelText: 'Отказ',
+          confirmClass: 'btn-danger'
+        });
+        if (!confirmed) {
+          toast.info('Изтриването е отменено.', { title: 'Отменено' });
           return;
         }
         const btn = actionTrigger;
@@ -435,7 +455,7 @@ function attachUserActions(container) {
           btn.innerHTML = originalText;
           btn.disabled = false;
           console.error('Delete User UI Component Error:', err);
-          alert('Внимание! Изтриването не успя: ' + (err.message || 'Неизвестна грешка'));
+          toast.error('Изтриването не успя: ' + (err.message || 'Неизвестна грешка'), { title: 'Грешка при изтриване' });
           throw err;
         }
       }
@@ -480,7 +500,18 @@ function attachPhotoActions(container) {
           toast.warning('Моля, изберете поне една снимка.', { title: 'Няма избрани снимки' });
           return;
         }
-        const reason = prompt('Причина за отхвърляне:') || '';
+        const reason = await showPrompt({
+          title: 'Отхвърляне на снимки',
+          message: 'Добавете причина за отхвърляне (по желание):',
+          confirmText: 'Отхвърли',
+          cancelText: 'Отказ',
+          confirmClass: 'btn-warning',
+          placeholder: 'Причина...'
+        });
+        if (reason === null) {
+          toast.info('Действието е отменено.', { title: 'Отменено' });
+          return;
+        }
         await rejectPhotosBatch(Array.from(selectedPhotos), reason);
         toast.warning(`${count} ${count === 1 ? 'снимка е отхвърлена' : 'снимки са отхвърлени'}.`, { title: 'Отхвърлени снимки' });
         await loadAdminData(container);
